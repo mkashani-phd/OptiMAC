@@ -3,24 +3,10 @@
 #from scipy.stats import binom
 import gurobipy as gp
 from gurobipy import *
-import numpy as np
 import csv
 
 
-def res_to_K(varInfo, m, n):
-    K = np.zeros((m, n))
-    for var in varInfo:
-        if var[0].startswith('x'):
-            temp = var[0][1:].strip('][').split(',')
-
-            i = int(temp[0].strip("message"))-1
-            j = int(temp[1].strip("tag"))-1
-
-            K[i, j] = 1
-    return K
-
-
-def math_model(M_size=10, T_size=10, p=1, q=1, TagEveryMessage=True, AtLeastOnce=False):
+def math_model(M_size=10, T_size=10, p=1, q=1, TagEveryMessage=True, AtLeastOnce=False, EquivalentA=False):
     
     # Sets
     I = ['message'+str(i+1) for i in range(M_size)]
@@ -56,6 +42,11 @@ def math_model(M_size=10, T_size=10, p=1, q=1, TagEveryMessage=True, AtLeastOnce
             #w = m.addVars(I, len(J)-1, name="w")
             q = m.addVars(I, len(J), name="q")
             
+        if(EquivalentA==True and AtLeastOnce==False):
+            A = m.addVars(I, J, K, name="A")
+            
+        if(EquivalentA==True):
+            Auth = m.addVar(name="Auth")
         
         # Model Obj
         #m.setObjective(
@@ -86,7 +77,12 @@ def math_model(M_size=10, T_size=10, p=1, q=1, TagEveryMessage=True, AtLeastOnce
         
         if(TagEveryMessage==True):
             m.addConstrs((gp.quicksum(x[i, j] for j in J) >= 1 for i in I), name='Tag_Every_Message')
+            
+        if(EquivalentA==True):
+            m.addConstrs((gp.quicksum(A[i, j, k] for j in J for k in K) == Auth for i in I), name='EquivalentA_part1')
         
+        if(EquivalentA==True and AtLeastOnce==False):
+            m.addConstrs(((y[i, j, k] * w[j, k] == A[i,j,k]) for i in I for j in J for k in K), name='Auth_Value')
         
         if(AtLeastOnce==True):
             m.addConstrs(((y[i, j, k] * w[j, k] == A[i,j,k]) for i in I for j in J for k in K), name='Auth_Value')
@@ -118,14 +114,14 @@ def math_model(M_size=10, T_size=10, p=1, q=1, TagEveryMessage=True, AtLeastOnce
                     print('%s' % c.constrName)
                     
         varInfo = [(v.varName, v.X) for v in m.getVars() if v.X>0]
+        #varInfo = [(v.varName, v.X) for v in m.getVars()]
         obj = ('Obj', m.objVal)
         varInfo.append(obj)
         
         #with open('TagResult_'+str(M_size)+'_'+str(T_size)+'.csv', 'w', newline='') as myfile:    
         #    w = csv.writer(myfile, delimiter=' ')
         #    w.writerows(varInfo)
-        
-        return res_to_K(varInfo, M_size, T_size)
+        return varInfo
         
     except gurobipy.GurobiError as e:
         print('Error code '+ str(e.errno) + ': ' + str(e))
