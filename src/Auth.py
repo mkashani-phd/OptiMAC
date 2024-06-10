@@ -1,3 +1,4 @@
+import itertools
 import numpy as np
 
             #  t1  t2  t3  t4  t5  t6  t7  t8  t9
@@ -82,6 +83,19 @@ def reward(k,m,t,rectified_A = True, lost_penalty = 40, a = 1,l = 1, o = 100):
     r = a*np.sum(A) - l*np.sum(L) - o * t_nr/m_nr
 
     return A, L, r
+
+
+
+def Strength_Number(matrix):
+    m, n = len(matrix), len(matrix[0])
+    for r in range(1, m+1):
+        for rows in itertools.combinations(range(m), r):
+            combined_row = np.zeros(n, dtype=int)
+            for row in rows:
+                combined_row += np.array(matrix[row])
+            if all(combined_row >= 1):
+                return np.array(list(rows))
+    return np.array([])
 
 ######### test #########
 # m_nr,t_nr = k.shape
