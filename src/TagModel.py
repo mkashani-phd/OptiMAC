@@ -3,7 +3,7 @@
 #from scipy.stats import binom
 import gurobipy as gp
 from gurobipy import *
-import csv
+import numpy as np
 
 
 def math_model(M_size=10, T_size=10, p=1, q=1, TagEveryMessage=True, AtLeastOnce=False, EquivalentA=False):
@@ -127,4 +127,15 @@ def math_model(M_size=10, T_size=10, p=1, q=1, TagEveryMessage=True, AtLeastOnce
         print('Error code '+ str(e.errno) + ': ' + str(e))
     
     #except AttributeError:
-    #    print('Encountered an attribute error')    
+    #    print('Encountered an attribute error')   
+    # 
+    # 
+def varinfo_to_K(varInfo):
+    K = np.zeros((m, n))
+    for var in varInfo:
+        if var[0].startswith('x'):
+            temp = var[0][1:].strip('][').split(',')
+            i = int(temp[0].strip('message'))
+            j = int(temp[1].strip('tag'))
+            K[i, j]  = np.round(var[1],0)
+    return K
