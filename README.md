@@ -8,4 +8,6 @@ More over we optimize this graph using Gurobi, implemented in the src/tagModel.p
 
 Lastly some more example such as frame work playground, strength number, and run the optimizer model are in the example folder.
 
+To run all the codes you need the pulp and the groubi optimizer
+
 

@@ -2,7 +2,7 @@ import itertools
 import numpy as np
 
             #  t1  t2  t3  t4  t5  t6  t7  t8  t9
-k = np.array([[ 1,  0,  0,  0,  0,  0,  1,  0,  0], # m1
+X = np.array([[ 1,  0,  0,  0,  0,  0,  1,  0,  0], # m1
               [ 1,  0,  0,  0,  0,  0,  0,  1,  0], # m2
               [ 1,  0,  0,  0,  0,  0,  0,  0,  1], # m3
               [ 0,  1,  0,  0,  0,  0,  1,  0,  0], # m4
@@ -44,42 +44,42 @@ def random_binary_array(shape, probability_of_one=0.5):
 
 
 # based on closed form expression
-def validate_slow(k,p,q):
-    m_nr,t_nr = k.shape
+def validate_slow(X,p,q):
+    m_nr,t_nr = X.shape
     A = np.zeros(m_nr)
     for msg in range(m_nr):
         for t in range(t_nr):
             temp = 1
             for m in range(m_nr):
-                temp *= k[m,t]*p[m] + 0**(k[m,t])
-            A[msg] += k[msg,t]*q[t]*temp
+                temp *= X[m,t]*p[m] + 0**(X[m,t])
+            A[msg] += X[msg,t]*q[t]*temp
     return A
 
 # based on mask and multiply operation
-def validate(k,m,t,rectified = False, includeValidTag = False):
+def validate(X,m,t,rectified = False, includeValidTag = False):
     # mask and multiply
-    m_nr,t_nr = k.shape
+    m_nr,t_nr = X.shape
     mm = np.zeros(t_nr)
     for tag in range(t_nr):
-        mask = m[np.where(k[:,tag] == 1)] # mask for tag
+        mask = m[np.where(X[:,tag] == 1)] # mask for tag
         mm[tag] = np.prod(mask) # multiply the mask
-    A = np.matmul(k,(mm*t).transpose())
+    A = np.matmul(X,(mm*t).transpose())
 
     A = np.array( [1 if x > 1 else x for x in A]) if rectified else A
     return (A, mm*t) if includeValidTag else A
 
-def Latency(k,m,t,lost_penalty = 40):
-    m_nr,t_nr = k.shape
-    A,validTags = validate(k,m,t,includeValidTag=True)
-    L = [np.where(k[:,np.where((k[msg,:]*validTags)>0)[0][0]] == 1)[0][-1]-msg if A[msg] >0 else lost_penalty for msg in range(m_nr)]
+def Latency(X,m,t,lost_penalty = 40):
+    m_nr,t_nr = X.shape
+    A,validTags = validate(X,m,t,includeValidTag=True)
+    L = [np.where(X[:,np.where((X[msg,:]*validTags)>0)[0][0]] == 1)[0][-1]-msg if A[msg] >0 else lost_penalty for msg in range(m_nr)]
 
     return np.array(L)
 
 
-def reward(k,m,t,rectified_A = True, lost_penalty = 40, a = 1,l = 1, o = 100):
-    m_nr,t_nr = k.shape
-    A = validate(k,m,t,rectified=rectified_A)
-    L= Latency(k,A,t,lost_penalty=lost_penalty)
+def reward(X,m,t,rectified_A = True, lost_penalty = 40, a = 1,l = 1, o = 100):
+    m_nr,t_nr = X.shape
+    A = validate(X,m,t,rectified=rectified_A)
+    L= Latency(X,A,t,lost_penalty=lost_penalty)
     r = a*np.sum(A) - l*np.sum(L) - o * t_nr/m_nr
 
     return A, L, r
@@ -98,13 +98,13 @@ def Strength_Number(matrix):
     return np.array([])
 
 ######### test #########
-# m_nr,t_nr = k.shape
+# m_nr,t_nr = X.shape
 # probability_of_success_message = .9
 # probability_of_success_tag = 1
 # m = random_binary_array(shape = m_nr, probability_of_one = probability_of_success_message)
 # t = random_binary_array(shape = t_nr, probability_of_one = probability_of_success_tag)
 
-# A = validate(k,m,t)
+# A = validate(X,m,t)
 
 # print("m = ")
 # print(m.reshape(6,-1))
@@ -116,7 +116,7 @@ def Strength_Number(matrix):
 # print(np.int8(A).reshape(6,-1))
 
 # print("Latency = ")
-# print(Latency(k,m,t))
+# print(Latency(X,m,t))
 
 # print("reward = ")
-# print(reward(k,m,t, rectified_A = False, lost_penalty = 40, a = 1,l = 0, o = 0)[2])
+# print(reward(X,m,t, rectified_A = False, lost_penalty = 40, a = 1,l = 0, o = 0)[2])

@@ -130,12 +130,12 @@ def math_model(M_size=10, T_size=10, p=1, q=1, TagEveryMessage=True, AtLeastOnce
     #    print('Encountered an attribute error')   
     # 
     # 
-def get_K(varInfo, m, n):
-    K = np.zeros((m, n))
+def get_X(varInfo, m, n):
+    X = np.zeros((m, n))
     for var in varInfo:
         if var[0].startswith('x'):
             temp = var[0][1:].strip('][').split(',')
             i = int(temp[0].strip('message'))-1
             j = int(temp[1].strip('tag'))-1
-            K[i, j]  = np.round(var[1],0)
-    return K
+            X[i, j]  = np.round(var[1],0)
+    return X
