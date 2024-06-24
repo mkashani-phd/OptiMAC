@@ -3,17 +3,18 @@
 #from scipy.stats import binom
 import gurobipy as gp
 from gurobipy import *
-import csv
+import numpy as np
 
+# At LeastOnce is nor correct
 
-def math_model(M_size=10, T_size=10, p=1, q=1, TagEveryMessage=True, AtLeastOnce=False, EquivalentA=False,
+def math_model(m_nr=10, t_nr=10, p=1, q=1, TagEveryMessage=True, AtLeastOnce=False, EquivalentA=False,
               weight_A=1, weight_L=0):
     
     # Sets
-    I = ['message'+str(i+1) for i in range(M_size)]
-    J = ['tag'+str(j+1) for j in range(T_size)]
-    #A = ['aggregate'+str(i) for i in range(M_size+1)]
-    K = [i for i in range(M_size+1)]
+    I = ['message'+str(i+1) for i in range(m_nr)]
+    J = ['tag'+str(j+1) for j in range(t_nr)]
+    #A = ['aggregate'+str(i) for i in range(m_nr+1)]
+    K = [i for i in range(m_nr+1)]
     
     # Parameters
     w = {}
@@ -27,9 +28,9 @@ def math_model(M_size=10, T_size=10, p=1, q=1, TagEveryMessage=True, AtLeastOnce
     
     try:
         m = gp.Model("TagModel")
-        # m.setParam('OutputFlag', 0)
+        m.setParam('OutputFlag', 0)
         m.setParam(GRB.Param.TimeLimit, 21600)
-        #m.setParam(GRB.Param.MIPGap, 0.01)
+        # m.setParam(GRB.Param.MIPGap, 0.01)
         #m.setParam(GRB.Param.MIPFocus, 2)
         
         #Create Variables
@@ -69,6 +70,11 @@ def math_model(M_size=10, T_size=10, p=1, q=1, TagEveryMessage=True, AtLeastOnce
                 weight_L * gp.quicksum(lat[i, j] for i in I for j in J),
                 GRB.MAXIMIZE
             )
+        # m.setObjective(
+        #         weight_A * Auth -
+        #         weight_L * gp.quicksum(lat[i, j] for i in I for j in J),
+        #         GRB.MAXIMIZE
+        #     )
             
         # Constraints
         
@@ -99,7 +105,7 @@ def math_model(M_size=10, T_size=10, p=1, q=1, TagEveryMessage=True, AtLeastOnce
             for i in range(len(I)):
                 if(b>i):
                     for j in J:
-                        m.addConstr((lat[I[i],j] >= b*x[I[b], j] - i*x[I[i], j] - (1-x[I[i], j])*M_size), name='Latency_Check')
+                        m.addConstr((lat[I[i],j] >= b*x[I[b], j] - i*x[I[i], j] - (1-x[I[i], j])*m_nr), name='Latency_Check')
         
         #m.addConstr((gp.quicksum(y1[v] + y2[v] for v in V) <= 1), name='5d')
         #m.addConstrs((w[s] >= eta - Pi[s] for s in S), name='6c')
@@ -128,7 +134,7 @@ def math_model(M_size=10, T_size=10, p=1, q=1, TagEveryMessage=True, AtLeastOnce
         obj = ('Obj', m.objVal)
         varInfo.append(obj)
         
-        #with open('TagResult_'+str(M_size)+'_'+str(T_size)+'.csv', 'w', newline='') as myfile:    
+        #with open('TagResult_'+str(m_nr)+'_'+str(t_nr)+'.csv', 'w', newline='') as myfile:    
         #    w = csv.writer(myfile, delimiter=' ')
         #    w.writerows(varInfo)
         return varInfo
@@ -137,4 +143,5 @@ def math_model(M_size=10, T_size=10, p=1, q=1, TagEveryMessage=True, AtLeastOnce
         print('Error code '+ str(e.errno) + ': ' + str(e))
     
     #except AttributeError:
-    #    print('Encountered an attribute error')    
+    #    print('Encountered an attribute error')  
+    # 

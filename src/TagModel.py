@@ -5,14 +5,14 @@ import gurobipy as gp
 from gurobipy import *
 import numpy as np
 
-
-def math_model(M_size=10, T_size=10, p=1, q=1, TagEveryMessage=True, AtLeastOnce=False, EquivalentA=False):
+# At LeastOnce is nor correct
+def math_model(m_nr=10, t_nr=10, p=1, q=1, TagEveryMessage=True, AtLeastOnce=False, EquivalentA=False):
     
     # Sets
-    I = ['message'+str(i+1) for i in range(M_size)]
-    J = ['tag'+str(j+1) for j in range(T_size)]
-    #A = ['aggregate'+str(i) for i in range(M_size+1)]
-    K = [i for i in range(M_size+1)]
+    I = ['message'+str(i+1) for i in range(m_nr)]
+    J = ['tag'+str(j+1) for j in range(t_nr)]
+    #A = ['aggregate'+str(i) for i in range(m_nr+1)]
+    K = [i for i in range(m_nr+1)]
     
     # Parameters
     w = {}
@@ -26,7 +26,7 @@ def math_model(M_size=10, T_size=10, p=1, q=1, TagEveryMessage=True, AtLeastOnce
     
     try:
         m = gp.Model("TagModel")
-        # m.setParam('OutputFlag', 0)
+        m.setParam('OutputFlag', 0)
         m.setParam(GRB.Param.TimeLimit, 21600)
         #m.setParam(GRB.Param.MIPGap, 0.01)
         #m.setParam(GRB.Param.MIPFocus, 2)
@@ -64,7 +64,9 @@ def math_model(M_size=10, T_size=10, p=1, q=1, TagEveryMessage=True, AtLeastOnce
                 gp.quicksum(y[i, j, k] * w[j, k] for i in I for j in J for k in K),
                 GRB.MAXIMIZE
             )
-            
+
+        # m.setObjective(Auth,GRB.MAXIMIZE)
+
         
         # Constraints
         
@@ -118,7 +120,7 @@ def math_model(M_size=10, T_size=10, p=1, q=1, TagEveryMessage=True, AtLeastOnce
         obj = ('Obj', m.objVal)
         varInfo.append(obj)
         
-        #with open('TagResult_'+str(M_size)+'_'+str(T_size)+'.csv', 'w', newline='') as myfile:    
+        #with open('TagResult_'+str(m_nr)+'_'+str(t_nr)+'.csv', 'w', newline='') as myfile:    
         #    w = csv.writer(myfile, delimiter=' ')
         #    w.writerows(varInfo)
         return varInfo
@@ -130,12 +132,3 @@ def math_model(M_size=10, T_size=10, p=1, q=1, TagEveryMessage=True, AtLeastOnce
     #    print('Encountered an attribute error')   
     # 
     # 
-def get_X(varInfo, m, n):
-    X = np.zeros((m, n))
-    for var in varInfo:
-        if var[0].startswith('x'):
-            temp = var[0][1:].strip('][').split(',')
-            i = int(temp[0].strip('message'))-1
-            j = int(temp[1].strip('tag'))-1
-            X[i, j]  = np.round(var[1],0)
-    return X
