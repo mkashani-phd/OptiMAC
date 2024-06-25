@@ -58,10 +58,9 @@ def get_X(varInfo, m, n):
 # print(X)
 
 #check  if the experiment is already saved
-def Check_Experiment(parameters):
+def Check_Experiment(parameters, filePath = 'Xs.pkl'):
     try:
-        with open('Xs.pkl', 'rb') as f:
-            experiments = pickle.load(f)
+        experiments = Load_Experiments(filePath)
     except:
         experiments = {}
     for i in range(len(experiments)):
@@ -70,9 +69,9 @@ def Check_Experiment(parameters):
             return experiments[i]
     return None
 
-def Save_Experiment(experiment):
+def Save_Experiment(experiment, filePath = 'Xs.pkl'):
     try:
-        with open('Xs.pkl', 'rb') as f:
+        with open(filePath, 'rb') as f:
             experiments = pickle.load(f)
             experiment_nr = len(experiments)
             experiments[experiment_nr]=experiment
@@ -88,13 +87,13 @@ def Save_Experiment(experiment):
         pickle.dump(experiments, f)
     print("Experiment saved as experiment number",experiment_nr)
 
-def Load_Experiments():
+def Load_Experiments(filePath = 'Xs.pkl'):
     import pickle
-    with open('Xs.pkl', 'rb') as f:
+    with open(filePath, 'rb') as f:
         return pickle.load(f)
 
 
-def Run_Experiment(model, parameters:dict, eval, save:bool = True):
+def Run_Experiment(model, parameters:dict, eval, m_size, t_size, save:bool = True):
 
     experiment = Check_Experiment(parameters=parameters)
     if experiment is not None:
@@ -108,7 +107,7 @@ def Run_Experiment(model, parameters:dict, eval, save:bool = True):
     experiment = {'parameters': parameters, 'results': results}
 
 
-    experiment['eval'] = eval(experiment)
+    experiment['eval'] = eval(experiment, m_size, t_size, plot = False)
 
     
     # save the experiment

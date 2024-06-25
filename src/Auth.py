@@ -24,10 +24,7 @@ X = np.array([[ 1,  0,  0,  0,  0,  0,  1,  0,  0], # m1
               [ 0,  0,  0,  0,  0,  1,  0,  1,  0], # m17
               [ 0,  0,  0,  0,  0,  1,  0,  0,  1]]) # m18
 
-def ProMAC_experiment(parameters,x):
-    M = parameters['m_nr']
-    p = parameters['p']
-    q = parameters['q']
+def ProMAC_X(M, x):
     # Initialize an NxN matrix with zeros
     matrix = np.zeros((M, M), dtype=int)
     
@@ -41,8 +38,10 @@ def ProMAC_experiment(parameters,x):
                 continue
             matrix[i, col_pos] = 1
     
-    X =  np.array(matrix.tolist())
-    return {'results': {'X': X}, 'parameters': {'m_nr': M, 't_nr': M, 'p': p, 'q': q}}
+    return matrix
+
+def Create_Experiment(parameters,X):
+    return {'results': {'X': X}, 'parameters':parameters, 'eval': evaluate({'results': {'X': X}, 'parameters':parameters}, 1024, 256)}
 
 def random_binary_array(shape, probability_of_one=0.5):
     # Ensure p is between 0 and 1
@@ -169,11 +168,17 @@ def Goodput(experiment,m,t,m_size=1024,t_size=256, tagAdjustment = False):
     else:
         return (np.sum(A)*m_size)/(m_nr*m_size + t_nr*t_size)
 
-def SecurityGoodput(experiment,m,t):
+def SecurityRate(experiment,m,t,t_size, b = None):
     m_nr,t_nr = experiment['parameters']['m_nr'],experiment['parameters']['t_nr']
+    if b is None:
+        p = experiment['parameters']['p']
+        q = experiment['parameters']['q']
+        EA = np.average(Validate(experiment,np.array([p]*m_nr),np.array([q]*t_nr)))
+        b = t_size
+        if EA > 1:
+            t_size = b/EA
     A = Validate(experiment,m,t)
-    totalA = np.sum(Validate(experiment,np.ones(m_nr),np.ones(t_nr)))
-    return np.sum(A)/totalA
+    return np.sum(A)*t_size/(m_nr*b)
 
 
 
@@ -184,10 +189,11 @@ def SecurityGoodput(experiment,m,t):
 # matrix = ProMAC_X(M, x)
 # print(matrix)
 
-def evaluate(experiment, plot = False):
+def evaluate(experiment, m_size, t_size, b = None, plot = False):
     X = experiment['results']['X']
     p = experiment['parameters']['p']
     q = experiment['parameters']['q']
+
 
     X = np.array(X)
     m, n = X.shape
@@ -200,12 +206,13 @@ def evaluate(experiment, plot = False):
 
     L = Latency(experiment, np.ones(m), np.ones(n))
 
+    
     eval = {'A': A, 'L': L, 
             'average_A': np.average(A), 'average_L': np.average(L),
             'computation_(tag to message ratio)':n/m,
-            'goodput_without_tag_adjustment': Goodput(experiment, np.ones(m), np.ones(n), tagAdjustment=False),
-            'goodput_with_tag_adjustment': Goodput(experiment, np.ones(m), np.ones(n), tagAdjustment=True),
-            'security_goodput': SecurityGoodput(experiment, np.array([p]*m), np.array([q]*n)),
+            'goodput_without_tag_adjustment': Goodput(experiment, np.ones(m), np.ones(n), tagAdjustment=False, m_size=m_size, t_size=t_size),
+            'goodput_with_tag_adjustment': Goodput(experiment, np.ones(m), np.ones(n), tagAdjustment=True, m_size=m_size, t_size= t_size if b is None else b),
+            'security_goodput': SecurityRate(experiment, np.array([p]*m), np.array([q]*n),b = b, t_size = t_size),
             'rows_that_breaks_the_verification': Get_Strength_Number(experiment)}
     #pretty print the eval dictionary
     if plot:
