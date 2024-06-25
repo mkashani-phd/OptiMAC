@@ -64,9 +64,12 @@ def Check_Experiment(parameters, filePath = 'Xs.pkl'):
     except:
         experiments = {}
     for i in range(len(experiments)):
-        if experiments[i]['parameters'] == parameters:
-            print("Experiment with the same parameters already exist as experiment number",i)
-            return experiments[i]
+        try:
+            if experiments[i]['parameters'] == parameters:
+                print("Experiment with the same parameters already exist as experiment number",i)
+                return experiments[i]
+        except:
+            pass
     return None
 
 def Save_Experiment(experiment, filePath = 'Xs.pkl'):
