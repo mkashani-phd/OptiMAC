@@ -1,0 +1,373 @@
+import cryptography.hazmat.primitives.padding as padding
+import numpy as np
+import socket
+import hmac
+import pprint
+import time
+
+
+
+# define a Buffer with the size of chunck_size_Byte * X.shape[0] * number_of_pages
+
+# Buffer size is in pages where each page is a list of X.shape[0]*chuncks and every chunck is of size chunk_size_Byte
+# the buffer is a list of pages
+# every page is a dict of chuncks in the format of SN:(msg,mac)
+# every chunck is a list of bytes
+# the buffer is updated when a new message is received
+# the buffer is used to reorder the messages
+
+# page zero keep a timer of the latest time the page is updated
+# this is used to remove the old page if a SN comes and the time from the last update is more than timeout
+class Buffer:
+
+    def __init__(self, X, Y, BUFFER_SIZE_IN_PAGES = 10, TIMEOUT_SECOND = 1,  warnings = True):
+    
+        # defining the buffer with maxlen of number_of_pages
+        # some chunks are padded
+        self.X = X
+        self.Y = Y
+
+        self.BUFFER_SIZE_IN_PAGES = BUFFER_SIZE_IN_PAGES
+        self.BUFFER = []
+
+        #initialize the buffer with empty page 
+        for i in range(0,BUFFER_SIZE_IN_PAGES):
+            self.add_page()
+ 
+
+        self.TIMEOUT_SECOND = TIMEOUT_SECOND
+        self.PAGE_ZERO_LAST_UPDATE = time.time()
+
+        self.MIN_SN = 0
+
+        self.warnings = warnings
+
+
+    def clear_buffer(self):
+        self.BUFFER = []
+        for i in range(0,self.BUFFER_SIZE_IN_PAGES):
+            self.add_page()
+        self.MIN_SN = 0
+        self.PAGE_ZERO_LAST_UPDATE = time.time()
+
+    def get_min_allowed_SN(self):
+        return self.MIN_SN
+    def get_max_allowed_SN(self):
+        return self.MIN_SN - (self.MIN_SN % self.X.shape[0]) + self.X.shape[0]*len(self.BUFFER) -1
+    
+
+    def sort_SN_in_page(self, page):
+        return {k: v for k, v in sorted(page.items(), key=lambda item: item[0])}
+
+    def add_page(self):
+        if len(self.BUFFER)  < self.BUFFER_SIZE_IN_PAGES:
+            self.BUFFER.append({})
+            return True
+        if self.warnings:
+            print("The buffer is full, increase the buffer size or this might be an attack to the buffer.")
+        return False
+    
+    def pop_page(self, page_index):
+        if page_index > len(self.BUFFER) or page_index < 0:
+            if self.warnings:
+                print(f"Page {page_index} is out of range, the buffer size is {len(self.BUFFER)}")
+            return None
+        if page_index == 0:
+            self.PAGE_ZERO_LAST_UPDATE = time.time()
+            self.MIN_SN += self.X.shape[0]
+
+        temp = self.sort_SN_in_page(self.BUFFER.pop(page_index))
+        self.add_page()
+        return temp
+    
+
+    def get_page_index_by_SN(self, SN):
+        return  ((SN-self.MIN_SN) // self.X.shape[0])%self.BUFFER_SIZE_IN_PAGES
+    
+
+    def is_page_full(self, page_index):
+        return len(self.BUFFER[page_index]) == self.X.shape[0]
+
+    # three possible return values None, page, (page, None, SN), (page, (page, None, SN), SN)
+    def add_msg_to_page(self, SN, msg, mac = b''):
+        l, r = self.get_min_allowed_SN(), self.get_max_allowed_SN()
+        if  SN < l or SN > r and self.warnings:
+            print(f"SN {SN} is out of range [{l,r}] (Buffer full), increase the buffer size or this might be an attack to the buffer.")
+            if time.time() - self.PAGE_ZERO_LAST_UPDATE < self.TIMEOUT_SECOND:
+                print(f" The message SN: {SN} is dropped. The buffer is full and the page zero will be kept until {self.TIMEOUT_SECOND -time.time() + self.PAGE_ZERO_LAST_UPDATE} more seconds")
+                return None
+            else:
+                min_sn = self.get_min_allowed_SN()
+                res = self.pop_page(0)
+                temp = self.add_msg_to_page(SN, msg)
+                return res ,temp, min_sn 
+            
+
+        page_index = self.get_page_index_by_SN(SN)
+
+        if SN in self.BUFFER[page_index] :
+            if self.warnings:
+                print("Message already exists in the buffer! Replay attack?")
+            return None
+        
+        if page_index == 0: 
+            self.PAGE_ZERO_LAST_UPDATE = time.time()
+        
+        self.BUFFER[page_index][SN] = (msg, mac)
+          
+        if self.is_page_full(page_index):
+            return self.pop_page(page_index)
+
+        return None
+    
+    def print_buffer(self):
+        print(f"{self.MIN_SN} Buffer:", self.BUFFER)
+    
+
+
+
+
+class UDP_RX:
+    def __init__(self,buffer= None, IP:str ='0.0.0.0', PORT:int = 23422, X = np.eye(3), Y = np.eye(3),  chunk_size_Byte=128, KEY=b"key", digestmod='sha384', BUFFER_SIZE_IN_PAGES = 10):
+        self.IP = IP
+        self.PORT = PORT
+        self.X = X
+        self.Y = Y
+        self.chunk_size_Byte = chunk_size_Byte
+        self.KEY = KEY
+        self.digestmod = digestmod
+        self.HAMC_SIZE = hmac.new(KEY, b'', digestmod=digestmod).digest_size
+        self.BUFFER_SIZE_IN_PAGES = BUFFER_SIZE_IN_PAGES
+
+        if buffer is None:
+            self.BUFFER = Buffer( X, Y, chunk_size_Byte, BUFFER_SIZE_IN_PAGES)
+        else:
+            self.BUFFER = buffer
+
+    def unpad(self,data):
+        unpadder = padding.PKCS7(self.chunk_size_Byte*8).unpadder()
+        return unpadder.update(data) + unpadder.finalize()
+        
+    def parse_msg(self, data):
+        SN = int.from_bytes(data[:4], 'big')
+        if np.sum(self.Y[SN % self.X.shape[0] - 1]):
+            chunk_data = data[4:-self.HAMC_SIZE]
+            mac = data[-self.HAMC_SIZE:]
+        else:
+            chunk_data = data[4:]
+            mac = b''
+        return SN, chunk_data, mac
+    
+    def veify_page(self, page:dict,verified_page:dict, key = None, X=None, Y= None):
+        if key is None:
+            key = self.KEY
+        if X is None:
+            X = self.X
+        if Y is None:
+            Y = self.Y
+
+        page_array = np.array(list(page.values()))
+        for SN in page.keys():
+            verified_page[SN] = np.array([page_array[SN%X.shape[0]][0],0])
+        
+        for tag_index in range(X.shape[1]):
+            selected_blocks = page_array[X[:, tag_index] == 1][:,0]
+            if selected_blocks.size > 0:
+                corresponding_data = b''.join(selected_blocks)
+                recieved_mac = page_array[np.where(Y[:, tag_index] == 1)[0][0]][1]
+
+                if recieved_mac == hmac.new(self.KEY, corresponding_data, digestmod=self.digestmod).digest():
+                    # print("Verified", res)
+                    for SN in np.array(list(page.keys()))[X[:, tag_index] == 1]:
+                        verified_page[SN][1] = int(verified_page[SN][1]) + 1
+
+                else:
+                    pass
+        return verified_page
+    
+    def fill_missing_in_page_with_zeros(self, page:dict, SN: int):
+        for i in range(SN, SN + self.X.shape[0]):
+            if i not in page:
+                page[i] = (b'', b'')
+        return page
+
+    def receive(self):
+        self.BUFFER.clear_buffer()
+        total_res = {}
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
+            sock.bind((self.IP, self.PORT))
+            while True:
+                data, addr = sock.recvfrom(4096+48)
+                if data == b'END':
+                    break
+                SN, chunk_data, mac = self.parse_msg(data)
+                res = self.BUFFER.add_msg_to_page(SN, chunk_data, mac)
+                # 4 stages are possible None, page, (page, None, SN), (page, (page, None, SN), SN)
+                total_res = self.process_buffer_respond(res, total_res=total_res)
+                
+        return total_res
+    
+
+    
+    def verify_page(self, page:dict,verified_page:dict, key = None, X=None, Y= None):
+        if key is None:
+            key = self.KEY
+        if X is None:
+            X = self.X
+        if Y is None:
+            Y = self.Y
+
+        page_array = np.array(list(page.values()))
+        for SN in page.keys():
+            verified_page[SN] = np.array([page_array[SN%X.shape[0]][0],0])
+        
+        for tag_index in range(X.shape[1]):
+            selected_blocks = page_array[X[:, tag_index] == 1][:,0]
+            if selected_blocks.size > 0:
+                corresponding_data = b''.join(selected_blocks)
+                recieved_mac = page_array[np.where(Y[:, tag_index] == 1)[0][0]][1]
+
+                if recieved_mac == hmac.new(self.KEY, corresponding_data, digestmod=self.digestmod).digest():
+                    # print("Verified", res)
+                    for SN in np.array(list(page.keys()))[X[:, tag_index] == 1]:
+                        verified_page[SN][1] = int(verified_page[SN][1]) + 1
+
+                else:
+                    pass
+        return verified_page
+
+
+    # 4 stages are possible
+    # Noraml: None, page,
+    # Forced poped page0 of the buffer: (page, None, SN), (page, (page, None, SN), SN)
+    def process_buffer_respond(self, add_msg_to_page_res, total_res):
+        if add_msg_to_page_res is not None:
+            if isinstance(add_msg_to_page_res, dict):
+                total_res = self.verify_page(add_msg_to_page_res, total_res)
+
+            elif isinstance(add_msg_to_page_res, tuple):  
+                page0 = self.fill_missing_in_page_with_zeros(page = add_msg_to_page_res[0], SN = add_msg_to_page_res[2])
+                total_res = self.verify_page(page0, total_res)
+                if add_msg_to_page_res[1] is not None: 
+                    print("add_msg_to_page_res", add_msg_to_page_res[1])
+                    total_res = self.process_buffer_respond(add_msg_to_page_res[1], total_res)
+        
+        return total_res
+
+    
+    def process_verified_page(self, verified_page, chunksize=7):
+        total_messages = len(verified_page)
+        verified_count = 0
+        not_verified_count = 0
+        verification_attempts = 0
+        total_verified_instances = 0
+        result = []
+        
+        # Sort the dictionary by sequence number
+        sorted_keys = sorted(verified_page.keys())
+        
+        for key in sorted_keys:
+            message, verified = verified_page[key]
+            verification_attempts += 1
+            
+            if int(verified) > 0 :
+                try:
+                    message = self.unpad(message)
+                except:
+                    pass
+                result.append(message)  # Append the verified message
+                verified_count += 1
+                total_verified_instances += 1
+            else:
+                result.append(b'*' * chunksize)  # Replace with asterisks if not verified
+                not_verified_count += 1
+        
+        # Join the messages to form the complete output
+        output_message = b''.join(result)
+        
+        # Calculate statistics
+        average_verifications_per_message = total_verified_instances / total_messages if total_messages > 0 else 0
+        missing_messages = not_verified_count
+
+        # Print the results
+        print("Output Message:", output_message)
+        print("Average Verifications per Message:", average_verifications_per_message)
+        print("Total Messages Not Verified:", missing_messages)
+        print("Total Verification Attempts:", verification_attempts)
+        
+        return output_message, average_verifications_per_message, missing_messages
+
+
+
+## unit test for the page verifier
+if __name__ == "__main__":
+    # unit test for the buffer
+    X = np.eye(3)
+    Y = np.eye(3)
+
+    buffer = Buffer(X, Y, BUFFER_SIZE_IN_PAGES = 3, TIMEOUT_SECOND = 1,  warnings = True)
+
+    print(buffer.get_min_allowed_SN())
+    print(buffer.get_max_allowed_SN())
+
+    print(buffer.add_page())
+
+    print(buffer.get_page_index_by_SN(0))
+    print(buffer.get_page_index_by_SN(1))
+
+    print(buffer.is_page_full(0))
+
+    print(buffer.add_msg_to_page(7, 'msg7'))
+    print(buffer.add_msg_to_page(3, 'msg3'))
+    print(buffer.add_msg_to_page(0, 'msg0'))
+    print(buffer.add_msg_to_page(1, 'msg1'))
+    print(buffer.add_msg_to_page(2, 'msg2'))
+
+    print(buffer.add_msg_to_page(4, 'msg4'))
+    print(buffer.add_msg_to_page(5, 'msg5'))
+
+    print(buffer.add_msg_to_page(6, 'msg6'))
+
+    print(buffer.add_msg_to_page(8, 'msg8'))
+
+    print(buffer.add_msg_to_page(-1, 'msg0'))
+
+    print(buffer.add_msg_to_page(100, 'msg0'))
+    time.sleep(1.1)
+    print(buffer.add_msg_to_page(20, 'msg0'))
+    time.sleep(1.1)
+    print(buffer.add_msg_to_page(100, 'msg0'))
+        
+
+    #### parameters that needs to be exhanged between the sender and the receiver #####
+    IP = "0.0.0.0"
+    PORT = 23422
+    X = np.eye(3)
+    Y = np.eye(3)
+    chunk_size_Byte = 7
+    key = b"key"
+    digestmod = 'sha384'
+
+
+
+    buffer = Buffer(X, Y, BUFFER_SIZE_IN_PAGES = 3, TIMEOUT_SECOND = 0.00001,  warnings = True)
+    udp_rx = UDP_RX(buffer= buffer, IP = IP, PORT = PORT, X = X, Y = Y,  chunk_size_Byte=chunk_size_Byte, KEY=key, digestmod=digestmod)
+    verified_page = udp_rx.receive()
+
+
+    # x = {0: b'\x00\x00\x00\x00This te\xd2\x1b\x97n\xe9\xf9\x10\xc8f\xd6\xac-e\x91\xfc\xa8\xddpt\xb6\x1b'
+    #     b'>\x98f%\x88? F\\,j\xde-v3"]\xcf|\x1a\xcf\xcbu\x19\xcfc3',
+    #  1: b'\x00\x00\x00\x01st show\n\xad46@\x9c\xce\x82\x1a\xa0\x17\xb8\xed\xd8N\x1d\xd2'
+    #     b'\x92\xc8Z\xb4\xae\x90\xa4*\xb6\x1f\xbb\xedAF\n\x11\xd4@\x9e\xdbeDC\x80'
+    #     b'\xf3\x13\x00R\xdbM\xfd',
+    #  2: b'\x00\x00\x00\x02s 2D in\x17\\\xc3\x00:2\x08y\x1ce\xf2\xc9\xb5\xb4/\x96\x14\xc5\xee\x8eS'
+    #     b'\xd4\xb7\x8c\xf9B\xff\xb2\xc2s\xa97\xa7q\xfc\xefU<\x82\xf9\xf8mC)\x0e'
+    #     b'\xc7\x0cf'}
+
+    # print(buffer.add_msg_to_page(*udp_rx.parse_msg(x[1])))
+    # print(buffer.add_msg_to_page(*udp_rx.parse_msg(x[0])))
+    # print(temp:=buffer.add_msg_to_page(*udp_rx.parse_msg(x[2])))
+
+    # print(temp)
+
+    # print(udp_rx.verify_page(temp, key, X, Y))
