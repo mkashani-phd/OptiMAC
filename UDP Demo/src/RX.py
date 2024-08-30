@@ -150,7 +150,7 @@ class UDP_RX:
         
     def parse_msg(self, data):
         SN = int.from_bytes(data[:4], 'big')
-        if np.sum(self.Y[SN % self.X.shape[0] - 1]):
+        if np.sum(self.Y[SN % self.X.shape[0]]):
             chunk_data = data[4:-self.HAMC_SIZE]
             mac = data[-self.HAMC_SIZE:]
         else:
@@ -255,7 +255,7 @@ class UDP_RX:
         return total_res
 
     
-    def process_verified_page(self, verified_page, chunksize=7):
+    def process_verified_page(self, verified_page, chunksize=7, print_results=False):
         total_messages = len(verified_page)
         verified_count = 0
         not_verified_count = 0
@@ -288,13 +288,14 @@ class UDP_RX:
         # Calculate statistics
         average_verifications_per_message = total_verified_instances / total_messages if total_messages > 0 else 0
         missing_messages = not_verified_count
-
         # Print the results
-        print("Output Message:", output_message)
-        print("Average Verifications per Message:", average_verifications_per_message)
-        print("Total Messages Not Verified:", missing_messages)
-        print("Total Verification Attempts:", verification_attempts)
+        if print_results:
+            print("Output Message:", output_message)
+            print("Average Verifications per Message:", average_verifications_per_message)
+            print("Total Messages Not Verified:", missing_messages)
+            print("Total Verification Attempts:", verification_attempts)
         
+
         return output_message, average_verifications_per_message, missing_messages
 
 
@@ -302,49 +303,85 @@ class UDP_RX:
 ## unit test for the page verifier
 if __name__ == "__main__":
     # unit test for the buffer
-    X = np.eye(3)
-    Y = np.eye(3)
+    # X = np.eye(3)
+    # Y = np.eye(3)
 
-    buffer = Buffer(X, Y, BUFFER_SIZE_IN_PAGES = 3, TIMEOUT_SECOND = 1,  warnings = True)
+    # buffer = Buffer(X, Y, BUFFER_SIZE_IN_PAGES = 3, TIMEOUT_SECOND = 1,  warnings = True)
 
-    print(buffer.get_min_allowed_SN())
-    print(buffer.get_max_allowed_SN())
+    # print(buffer.get_min_allowed_SN())
+    # print(buffer.get_max_allowed_SN())
 
-    print(buffer.add_page())
+    # print(buffer.add_page())
 
-    print(buffer.get_page_index_by_SN(0))
-    print(buffer.get_page_index_by_SN(1))
+    # print(buffer.get_page_index_by_SN(0))
+    # print(buffer.get_page_index_by_SN(1))
 
-    print(buffer.is_page_full(0))
+    # print(buffer.is_page_full(0))
 
-    print(buffer.add_msg_to_page(7, 'msg7'))
-    print(buffer.add_msg_to_page(3, 'msg3'))
-    print(buffer.add_msg_to_page(0, 'msg0'))
-    print(buffer.add_msg_to_page(1, 'msg1'))
-    print(buffer.add_msg_to_page(2, 'msg2'))
+    # print(buffer.add_msg_to_page(7, 'msg7'))
+    # print(buffer.add_msg_to_page(3, 'msg3'))
+    # print(buffer.add_msg_to_page(0, 'msg0'))
+    # print(buffer.add_msg_to_page(1, 'msg1'))
+    # print(buffer.add_msg_to_page(2, 'msg2'))
 
-    print(buffer.add_msg_to_page(4, 'msg4'))
-    print(buffer.add_msg_to_page(5, 'msg5'))
+    # print(buffer.add_msg_to_page(4, 'msg4'))
+    # print(buffer.add_msg_to_page(5, 'msg5'))
 
-    print(buffer.add_msg_to_page(6, 'msg6'))
+    # print(buffer.add_msg_to_page(6, 'msg6'))
 
-    print(buffer.add_msg_to_page(8, 'msg8'))
+    # print(buffer.add_msg_to_page(8, 'msg8'))
 
-    print(buffer.add_msg_to_page(-1, 'msg0'))
+    # print(buffer.add_msg_to_page(-1, 'msg0'))
 
-    print(buffer.add_msg_to_page(100, 'msg0'))
-    time.sleep(1.1)
-    print(buffer.add_msg_to_page(20, 'msg0'))
-    time.sleep(1.1)
-    print(buffer.add_msg_to_page(100, 'msg0'))
+    # print(buffer.add_msg_to_page(100, 'msg0'))
+    # time.sleep(1.1)
+    # print(buffer.add_msg_to_page(20, 'msg0'))
+    # time.sleep(1.1)
+    # print(buffer.add_msg_to_page(100, 'msg0'))
         
 
     #### parameters that needs to be exhanged between the sender and the receiver #####
     IP = "0.0.0.0"
     PORT = 23422
-    X = np.eye(3)
-    Y = np.eye(3)
-    chunk_size_Byte = 7
+            #  t1  t2  t3  t4  t5  t6  t7  t8  t9
+    X = np.array([[ 1,  0,  0,  0,  0,  0,  1,  0,  0], # m1
+                [ 1,  0,  0,  0,  0,  0,  0,  1,  0], # m2
+                [ 1,  0,  0,  0,  0,  0,  0,  0,  1], # m3
+                [ 0,  1,  0,  0,  0,  0,  1,  0,  0], # m4
+                [ 0,  1,  0,  0,  0,  0,  0,  1,  0], # m5
+                [ 0,  1,  0,  0,  0,  0,  0,  0,  1], # m6
+                [ 0,  0,  1,  0,  0,  0,  1,  0,  0], # m7
+                [ 0,  0,  1,  0,  0,  0,  0,  1,  0], # m8
+                [ 0,  0,  1,  0,  0,  0,  0,  0,  1], # m9
+                [ 0,  0,  0,  1,  0,  0,  1,  0,  0], # m10
+                [ 0,  0,  0,  1,  0,  0,  0,  1,  0], # m11
+                [ 0,  0,  0,  1,  0,  0,  0,  0,  1], # m12
+                [ 0,  0,  0,  0,  1,  0,  1,  0,  0], # m13
+                [ 0,  0,  0,  0,  1,  0,  0,  1,  0], # m14
+                [ 0,  0,  0,  0,  1,  0,  0,  0,  1], # m15
+                [ 0,  0,  0,  0,  0,  1,  1,  0,  0], # m16
+                [ 0,  0,  0,  0,  0,  1,  0,  1,  0], # m17
+                [ 0,  0,  0,  0,  0,  1,  0,  0,  1]]) # m18
+                #  t1  t2  t3  t4  t5  t6  t7  t8  t9
+    Y = np.array([[ 0,  0,  0,  0,  0,  0,  1,  0,  0], # m1
+                [ 0,  0,  0,  0,  0,  0,  0,  1,  0], # m2
+                [ 1,  0,  0,  0,  0,  0,  0,  0,  0], # m3
+                [ 0,  0,  0,  0,  0,  0,  0,  0,  0], # m4
+                [ 0,  0,  0,  0,  0,  0,  0,  0,  0], # m5
+                [ 0,  1,  0,  0,  0,  0,  0,  0,  0], # m6
+                [ 0,  0,  0,  0,  0,  0,  0,  0,  0], # m7
+                [ 0,  0,  0,  0,  0,  0,  0,  0,  0], # m8
+                [ 0,  0,  1,  0,  0,  0,  0,  0,  0], # m9
+                [ 0,  0,  0,  0,  0,  0,  0,  0,  0], # m10
+                [ 0,  0,  0,  0,  0,  0,  0,  0,  0], # m11
+                [ 0,  0,  0,  1,  0,  0,  0,  0,  0], # m12
+                [ 0,  0,  0,  0,  0,  0,  0,  0,  0], # m13
+                [ 0,  0,  0,  0,  0,  0,  0,  0,  0], # m14
+                [ 0,  0,  0,  0,  1,  0,  0,  0,  0], # m15
+                [ 0,  0,  0,  0,  0,  0,  0,  0,  0], # m16
+                [ 0,  0,  0,  0,  0,  1,  0,  0,  0], # m17
+                [ 0,  0,  0,  0,  0,  0,  0,  0,  1]]) # m18
+    chunk_size_Byte = 2
     key = b"key"
     digestmod = 'sha384'
 
@@ -352,22 +389,46 @@ if __name__ == "__main__":
 
     buffer = Buffer(X, Y, BUFFER_SIZE_IN_PAGES = 3, TIMEOUT_SECOND = 0.00001,  warnings = True)
     udp_rx = UDP_RX(buffer= buffer, IP = IP, PORT = PORT, X = X, Y = Y,  chunk_size_Byte=chunk_size_Byte, KEY=key, digestmod=digestmod)
-    verified_page = udp_rx.receive()
+    # verified_page = udp_rx.receive()
 
 
-    # x = {0: b'\x00\x00\x00\x00This te\xd2\x1b\x97n\xe9\xf9\x10\xc8f\xd6\xac-e\x91\xfc\xa8\xddpt\xb6\x1b'
-    #     b'>\x98f%\x88? F\\,j\xde-v3"]\xcf|\x1a\xcf\xcbu\x19\xcfc3',
-    #  1: b'\x00\x00\x00\x01st show\n\xad46@\x9c\xce\x82\x1a\xa0\x17\xb8\xed\xd8N\x1d\xd2'
-    #     b'\x92\xc8Z\xb4\xae\x90\xa4*\xb6\x1f\xbb\xedAF\n\x11\xd4@\x9e\xdbeDC\x80'
-    #     b'\xf3\x13\x00R\xdbM\xfd',
-    #  2: b'\x00\x00\x00\x02s 2D in\x17\\\xc3\x00:2\x08y\x1ce\xf2\xc9\xb5\xb4/\x96\x14\xc5\xee\x8eS'
-    #     b'\xd4\xb7\x8c\xf9B\xff\xb2\xc2s\xa97\xa7q\xfc\xefU<\x82\xf9\xf8mC)\x0e'
-    #     b'\xc7\x0cf'}
+    x ={0: b'\x00\x00\x00\x00Th\x045\x17o<~\xa1\xb5\x88<\x93\x87gQp\x07\r?\x88\xc8\xef\x17'
+            b'\xdbD\xab\xd5\xdc\xce\x99#\x8c\xcb\x82p\x8eA\x07\xc7\xa7C\xad\xf9'
+            b'\xb3M\xe0\x9d6!',
+        1: b'\x00\x00\x00\x01is5Fl\xab\x18\xa7\xe07G\x10\xdf\x94\x08\x9d\xa1\x86O\\\x85\xe4a\x8b'
+            b'\xbe\xc7\r\x81\xe0\x06\x03K\xde\x0c\x82\xb5gV\x1e\xe82\x18\xf4\x80'
+            b'\xb0\xa1\xc2@\x8b\x9a',
+        2: b'\x00\x00\x00\x02 t\xf0I\x83\xd4\x18l\xefsQ\xf1\x17dolE\x8a\x97\xc3E\xdfiS\xf8\x03^9'
+            b'M\x88\xb3\xf9\xefzjI\xf5\xdaV\xc1m\xce\xa4\x89\x13\xf9\xf2\xa3<\x04',
+        3: b'\x00\x00\x00\x03es',
+        4: b'\x00\x00\x00\x04t ',
+        5: b'\x00\x00\x00\x05sh7\xb2\xfd\xe9\xb7D\xe8R\xb1\x14\xa5\xac3`\xbb\xa7\x90\xfc\x1a\xaa\x13n'
+            b"\x9b\x86\xf8\x13\x8a\xab\x9cwm\xe3\xb9\x81'\x80w0\x08\x9f\x99pf\x80@\xdd"
+            b'!\x0f',
+        6: b'\x00\x00\x00\x06ow',
+        7: b'\x00\x00\x00\x07s ',
+        8: b'\x00\x00\x00\x082Db\xf8\x81P\xaf*\xdb\x1b\xb9\\\x9c\x0c@\x06\xb5\xb7t\xeb\x15;\xc3N'
+            b'rIU\xddm\xec\x13\xa0\xeb2\xb3?6j\x19\xfc\xd9\xb5\xe8:jnKt$\xf5',
+        9: b'\x00\x00\x00\x09 i',
+        10: b'\x00\x00\x00\x0ant',
+        11: b'\x00\x00\x00\x0beg\x04\xed$\x17\xa00\xc9}\xe23\x92\x8e\xa0\x11g\xba\x03\x8b\x08(\xd06'
+            b'y7?Z0\x8d\xb2\xc2\xe7\x7f.m\xb8{h\xb3\x8b\xae\xa2\x10\x85*Wx\xa6;',
+        12: b'\x00\x00\x00\x0cri',
+        13: b'\x00\x00\x00\x0dty',
+        14: b'\x00\x00\x00\x0e cx\x1e0\x8aU \xfc\xa7\xe8;\x0e\xa6(\xa6\xa12S\xf7\xde\xb3\xec\xc5'
+            b'\xccZO-\x1f,\xf8\x98\xdaxQ"\xc6.5g\x08-\x9d\x85p\xdcD/\xc2Z',
+        15: b'\x00\x00\x00\x0fhe',
+        16: b'\x00\x00\x00\x10ck\xaa\xc9\xc5\x98\xe2a\xf2y\xf6\xf1i,\xd9eq\x15\xc7X<\xdc\x1fV'
+            b'(\x1b\xd2=\x9c\xce7Og\xb8\xa3.\xaf\x04\xb7\x95\x02\xbe\xe2\x85\xa6#H\xdd'
+            b'\xd8\x8c',
+        17: b"\x00\x00\x00\x11 i+\xc9\xbc\x88b\xcf\xd4*\xa3.\x94\x9a\x16fpZ\xa9\x85'\xf3\x1c\xa7"
+            b'\x9f\xb5\x11\xe8@6\xf3\xbdZ\xf2\xc7\xa0\xca[\xf3\x94\xb8t\xa6\xea'
+            b'l\xcd|\rp\xe2'}
 
-    # print(buffer.add_msg_to_page(*udp_rx.parse_msg(x[1])))
-    # print(buffer.add_msg_to_page(*udp_rx.parse_msg(x[0])))
-    # print(temp:=buffer.add_msg_to_page(*udp_rx.parse_msg(x[2])))
+    for msg in x:
+        print(temp:= buffer.add_msg_to_page(*udp_rx.parse_msg(x[msg])))
 
-    # print(temp)
+    verified_page = {}
+    verified_page = udp_rx.verify_page(temp, verified_page)
 
-    # print(udp_rx.verify_page(temp, key, X, Y))
+    print(udp_rx.process_verified_page(verified_page, print_results=True))
