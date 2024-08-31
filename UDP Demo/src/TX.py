@@ -77,7 +77,7 @@ class UDP_TX:
     # time: time          (8Bytes)
     # msg: message        (chunk_size_Byte Bytes)  
     def send_msg(self,SN, msg, sock, dest):
-        sock.sendto(SN.to_bytes(4, 'big') + struct.pack('d', time.perf_counter()) + msg, dest)
+        sock.sendto(SN.to_bytes(4, 'big') + struct.pack('d', time.time()) + msg, dest)
         time.sleep(0.000001)
 
 
@@ -148,7 +148,7 @@ if __name__ == "__main__":
                 [ 0,  0,  0,  0,  0,  0,  0,  0,  0], # m16
                 [ 0,  0,  0,  0,  0,  1,  0,  0,  0], # m17
                 [ 0,  0,  0,  0,  0,  0,  0,  0,  1]]) # m18
-    chunk_size_Byte = 2
+    chunk_size_Byte = 2 
     key = b"key"
     digestmod = 'sha384'
 
@@ -172,7 +172,7 @@ if __name__ == "__main__":
     simulation = upd_tx.mac_for_page(pages[0], key, X, Y)
     SN = 0
     for msg in simulation:
-        simulation[msg] = SN.to_bytes(4, 'big') + struct.pack('d', time.perf_counter()) +  simulation[msg]
+        simulation[msg] = SN.to_bytes(4, 'big') + struct.pack('d', time.time()) +  simulation[msg]
         SN += 1
     pprint.pprint(simulation)
     # at this point after calculating the MAC for each page, we can send the data

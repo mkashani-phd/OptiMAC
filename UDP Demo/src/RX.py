@@ -277,7 +277,7 @@ class UDP_RX:
                 #     message = self.unpad(message)
                 # except:
                 #     pass
-                total_Auth_latency += time.perf_counter() - float(time_stamp)
+                total_Auth_latency += time.time() - float(time_stamp)
                 result.append(message)  # Append the verified message
                 verified_count += 1
                 total_verified_instances += int(verified)
