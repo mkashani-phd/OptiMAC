@@ -4,6 +4,7 @@ import socket
 import hmac
 import pprint
 import time
+import struct
 
 
 class UDP_TX:
@@ -72,9 +73,12 @@ class UDP_TX:
                 res[target_index] = page[target_index] + hmac.new(key, data, digestmod=self.digestmod).digest()
         return res
 
+    # SN: Sequence Number (4Bytes)
+    # time: time          (8Bytes)
+    # msg: message        (chunk_size_Byte Bytes)  
     def send_msg(self,SN, msg, sock, dest):
-        sock.sendto(SN.to_bytes(4, 'big') + msg, dest)
-        time.sleep(0.00001)
+        sock.sendto(SN.to_bytes(4, 'big') + struct.pack('d', time.perf_counter()) + msg, dest)
+        # time.sleep(0.00001)
 
 
     def transmit(self, Bytes, attack:list=[]):
@@ -164,6 +168,13 @@ if __name__ == "__main__":
     pages = upd_tx.chucks_to_nD_arrangments(chunks, chunk_size_Byte, X)
     pprint.pprint(upd_tx.mac_for_page(pages[0], key, X, Y))
 
+    # Emulating the transmitted Packets
+    simulation = upd_tx.mac_for_page(pages[0], key, X, Y)
+    SN = 0
+    for msg in simulation:
+        simulation[msg] = SN.to_bytes(4, 'big') + struct.pack('d', time.perf_counter()) +  simulation[msg]
+        SN += 1
+    pprint.pprint(simulation)
     # at this point after calculating the MAC for each page, we can send the data
     # iterate through the chunks (msg) in every page and send it to the destination
     # the function send_msg is responsible for sending the data to the destination
