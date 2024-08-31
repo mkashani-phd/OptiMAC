@@ -159,32 +159,35 @@ class UDP_RX:
             mac = b''
         return SN,time_stamp, chunk_data, mac
     
-    def veify_page(self, page:dict,verified_page:dict, key = None, X=None, Y= None):
-        if key is None:
-            key = self.KEY
-        if X is None:
-            X = self.X
-        if Y is None:
-            Y = self.Y
+    # def veify_page(self, page:dict,verified_page:dict, key = None, X=None, Y= None):
+    #     if key is None:
+    #         key = self.KEY
+    #     if X is None:
+    #         X = self.X
+    #     if Y is None:
+    #         Y = self.Y
 
-        page_array = np.array(list(page.values()))
-        for SN in page.keys():
-            verified_page[SN] = np.array([page_array[SN%X.shape[0]][0],0])
-        
-        for tag_index in range(X.shape[1]):
-            selected_blocks = page_array[X[:, tag_index] == 1][:,0]
-            if selected_blocks.size > 0:
-                corresponding_data = b''.join(selected_blocks)
-                recieved_mac = page_array[np.where(Y[:, tag_index] == 1)[0][0]][1]
+    #     page_array = np.array(list(page.values()))
+    #     try:
+    #         for SN in page.keys():
+    #             verified_page[SN] = np.array([page_array[SN%X.shape[0]][0],0])
+            
+    #         for tag_index in range(X.shape[1]):
+    #             selected_blocks = page_array[X[:, tag_index] == 1][:,0]
+    #             if selected_blocks.size > 0:
+    #                 corresponding_data = b''.join(selected_blocks)
+    #                 recieved_mac = page_array[np.where(Y[:, tag_index] == 1)[0][0]][1]
 
-                if recieved_mac == hmac.new(self.KEY, corresponding_data, digestmod=self.digestmod).digest():
-                    # print("Verified", res)
-                    for SN in np.array(list(page.keys()))[X[:, tag_index] == 1]:
-                        verified_page[SN][1] = int(verified_page[SN][1]) + 1
+    #                 if recieved_mac == hmac.new(self.KEY, corresponding_data, digestmod=self.digestmod).digest():
+    #                     # print("Verified", res)
+    #                     for SN in np.array(list(page.keys()))[X[:, tag_index] == 1]:
+    #                         verified_page[SN][1] = int(verified_page[SN][1]) + 1
 
-                else:
-                    pass
-        return verified_page
+    #                 else:
+    #                     pass
+    #     except:
+    #         verified_page = None
+    #     return verified_page
     
     def fill_missing_in_page_with_zeros(self, page:dict, SN: int):
         for i in range(SN, SN + self.X.shape[0]):
@@ -219,22 +222,25 @@ class UDP_RX:
             Y = self.Y
 
         page_array = np.array(list(page.values()))
-        for SN in page.keys():
-            verified_page[SN] = np.array([page_array[SN%X.shape[0]][0],0, page_array[SN%X.shape[0]][2]])
-        
-        for tag_index in range(X.shape[1]):
-            selected_blocks = page_array[X[:, tag_index] == 1][:,0]
-            if selected_blocks.size > 0:
-                corresponding_data = b''.join(selected_blocks)
-                recieved_mac = page_array[np.where(Y[:, tag_index] == 1)[0][0]][1]
+        try:
+            for SN in page.keys():
+                verified_page[SN] = np.array([page_array[SN%X.shape[0]][0],0, page_array[SN%X.shape[0]][2]])
+            
+            for tag_index in range(X.shape[1]):
+                selected_blocks = page_array[X[:, tag_index] == 1][:,0]
+                if selected_blocks.size > 0:
+                    corresponding_data = b''.join(selected_blocks)
+                    recieved_mac = page_array[np.where(Y[:, tag_index] == 1)[0][0]][1]
 
-                if recieved_mac == hmac.new(self.KEY, corresponding_data, digestmod=self.digestmod).digest():
-                    # print("Verified", res)
-                    for SN in np.array(list(page.keys()))[X[:, tag_index] == 1]:
-                        verified_page[SN][1] = int(verified_page[SN][1]) + 1
+                    if recieved_mac == hmac.new(self.KEY, corresponding_data, digestmod=self.digestmod).digest():
+                        # print("Verified", res)
+                        for SN in np.array(list(page.keys()))[X[:, tag_index] == 1]:
+                            verified_page[SN][1] = int(verified_page[SN][1]) + 1
 
-                else:
-                    pass
+                    else:
+                        pass
+        except:
+            verified_page = None
         return verified_page
 
 
@@ -264,6 +270,11 @@ class UDP_RX:
         total_verified_instances = 0
         total_Auth_latency = 0
         result = []
+
+        if verified_page is None:
+            if print_results:
+                print("No verified page")
+            return None, 0, 0, 0, 0
         
         # Sort the dictionary by sequence number
         sorted_keys = sorted(verified_page.keys())
@@ -436,9 +447,11 @@ if __name__ == "__main__":
             b'Z\xf2\xc7\xa0\xca[\xf3\x94\xb8t\xa6\xeal\xcd|\rp\xe2'}
 
     for msg in x:
-        print(temp:= buffer.add_msg_to_page(*udp_rx.parse_msg_and_get_ToF(x[msg])))
+        print(temp:= buffer.add_msg_to_page(*udp_rx.parse_msg(x[msg])))
 
     verified_page = {}
     verified_page = udp_rx.verify_page(temp, verified_page)
 
     print(udp_rx.process_verified_page(verified_page, print_results=True))
+    page = {0:[]}
+    print(udp_rx.verify_page(page,verified_page))
