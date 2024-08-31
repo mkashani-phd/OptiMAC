@@ -78,7 +78,7 @@ class UDP_TX:
     # msg: message        (chunk_size_Byte Bytes)  
     def send_msg(self,SN, msg, sock, dest):
         sock.sendto(SN.to_bytes(4, 'big') + struct.pack('d', time.perf_counter()) + msg, dest)
-        # time.sleep(0.00001)
+        time.sleep(0.000001)
 
 
     def transmit(self, Bytes, attack:list=[]):

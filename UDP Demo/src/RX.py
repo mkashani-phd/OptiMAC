@@ -89,7 +89,7 @@ class Buffer:
         return len(self.BUFFER[page_index]) == self.X.shape[0]
 
     # three possible return values None, page, (page, None, SN), (page, (page, None, SN), SN)
-    def add_msg_to_page(self, SN, ToF, msg, mac = b''):
+    def add_msg_to_page(self, SN, time_stamp, msg, mac = b''):
         l, r = self.get_min_allowed_SN(), self.get_max_allowed_SN()
         if  SN < l or SN > r and self.warnings:
             print(f"SN {SN} is out of range [{l,r}] (Buffer full), increase the buffer size or this might be an attack to the buffer.")
@@ -99,7 +99,7 @@ class Buffer:
             else:
                 min_sn = self.get_min_allowed_SN()
                 res = self.pop_page(0)
-                temp = self.add_msg_to_page(SN, msg, ToF)
+                temp = self.add_msg_to_page(SN, msg, time_stamp)
                 return res ,temp, min_sn 
             
 
@@ -113,7 +113,7 @@ class Buffer:
         if page_index == 0: 
             self.PAGE_ZERO_LAST_UPDATE = time.time()
         
-        self.BUFFER[page_index][SN] = (msg, mac, ToF)
+        self.BUFFER[page_index][SN] = (msg, mac, time_stamp)
           
         if self.is_page_full(page_index):
             return self.pop_page(page_index)
@@ -148,8 +148,8 @@ class UDP_RX:
         unpadder = padding.PKCS7(self.chunk_size_Byte*8).unpadder()
         return unpadder.update(data) + unpadder.finalize()
         
-    def parse_msg_and_get_ToF(self, data):
-        ToF = time.perf_counter()-struct.unpack('d', data[4:12])[0]
+    def parse_msg(self, data):
+        time_stamp = struct.unpack('d', data[4:12])[0]
         SN = int.from_bytes(data[:4], 'big')
         if np.sum(self.Y[SN % self.X.shape[0]]):
             chunk_data = data[12:-self.HAMC_SIZE]
@@ -157,7 +157,7 @@ class UDP_RX:
         else:
             chunk_data = data[12:]
             mac = b''
-        return SN,ToF, chunk_data, mac
+        return SN,time_stamp, chunk_data, mac
     
     def veify_page(self, page:dict,verified_page:dict, key = None, X=None, Y= None):
         if key is None:
@@ -201,8 +201,8 @@ class UDP_RX:
                 data, addr = sock.recvfrom(4096+48)
                 if data == b'END':
                     break
-                SN, ToF, chunk_data, mac = self.parse_msg_and_get_ToF(data)
-                res = self.BUFFER.add_msg_to_page(SN,ToF, chunk_data, mac)
+                SN, time_stamp, chunk_data, mac = self.parse_msg(data)
+                res = self.BUFFER.add_msg_to_page(SN,time_stamp, chunk_data, mac)
                 # 4 stages are possible None, page, (page, None, SN), (page, (page, None, SN), SN)
                 total_res = self.process_buffer_respond(res, total_res=total_res)
                 
@@ -256,20 +256,20 @@ class UDP_RX:
         return total_res
 
     
-    def process_verified_page(self, verified_page, chunksize=7, print_results=False, ToF_For_Not_Verified = 0.04):
+    def process_verified_page(self, verified_page, chunksize=7, print_results=False, latency_penalty_For_Not_Verified = 0.04):
         total_messages = len(verified_page)
         verified_count = 0
         not_verified_count = 0
         verification_attempts = 0
         total_verified_instances = 0
-        total_ToF = 0
+        total_Auth_latency = 0
         result = []
         
         # Sort the dictionary by sequence number
         sorted_keys = sorted(verified_page.keys())
         
         for key in sorted_keys:
-            message, verified, ToF = verified_page[key]
+            message, verified, time_stamp = verified_page[key]
             verification_attempts += 1
             
             if int(verified) > 0 :
@@ -277,12 +277,12 @@ class UDP_RX:
                 #     message = self.unpad(message)
                 # except:
                 #     pass
-                total_ToF += float(ToF)
+                total_Auth_latency += time.perf_counter() - float(time_stamp)
                 result.append(message)  # Append the verified message
                 verified_count += 1
                 total_verified_instances += int(verified)
             else:
-                total_ToF += ToF_For_Not_Verified
+                total_Auth_latency += latency_penalty_For_Not_Verified
                 result.append(b'\x00' * chunksize)  # Replace with asterisks if not verified
                 not_verified_count += 1
         
@@ -298,10 +298,10 @@ class UDP_RX:
             print("Average Verifications per Message:", average_verifications_per_message)
             print("Total Messages Not Verified:", missing_messages)
             print("Total Verification Attempts:", verification_attempts)  
-            print("Total Time of Flight:", total_ToF)
+            print("Total Authentication Latency:", total_Auth_latency)
         
 
-        return output_message, average_verifications_per_message, missing_messages, total_verified_instances/verified_count if verified_count > 0 else 0, total_ToF/verified_count if verified_count > 0 else 0
+        return output_message, average_verifications_per_message, missing_messages, total_verified_instances/verified_count if verified_count > 0 else 0, total_Auth_latency/verified_count if verified_count > 0 else 0
 
 
 
