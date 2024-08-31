@@ -131,48 +131,59 @@ import time
 
 class OptimizedBuffer:
     def __init__(self, X, Y, BUFFER_SIZE_IN_PAGES=10, TIMEOUT_SECOND=1, warnings=True):
+        # Defining the buffer with maxlen of number_of_pages
         self.X = X
         self.Y = Y
         self.BUFFER_SIZE_IN_PAGES = BUFFER_SIZE_IN_PAGES
         self.BUFFER = deque(maxlen=BUFFER_SIZE_IN_PAGES)
-        self.TIMEOUT_SECOND = TIMEOUT_SECOND
-        self.PAGE_ZERO_LAST_UPDATE = time.time()
-        self.MIN_SN = 0
-        self.MAX_SN = self.MIN_SN + (self.X.shape[0] * self.BUFFER_SIZE_IN_PAGES) - 1
-        self.warnings = warnings
 
         # Initialize the buffer with empty pages
         for _ in range(BUFFER_SIZE_IN_PAGES):
-            self.BUFFER.append(OrderedDict())
+            self.add_page()
+
+        self.TIMEOUT_SECOND = TIMEOUT_SECOND
+        self.PAGE_ZERO_LAST_UPDATE = time.time()
+        self.MIN_SN = 0
+        self.warnings = warnings
+
+    def clear_buffer(self):
+        """Clears the buffer and resets the minimum sequence number."""
+        self.BUFFER.clear()
+        for _ in range(self.BUFFER_SIZE_IN_PAGES):
+            self.add_page()
+        self.MIN_SN = 0
+        self.PAGE_ZERO_LAST_UPDATE = time.time()
 
     def get_min_allowed_SN(self):
         return self.MIN_SN
 
     def get_max_allowed_SN(self):
-        return self.MAX_SN
+        return self.MIN_SN - (self.MIN_SN % self.X.shape[0]) + self.X.shape[0] * len(self.BUFFER) - 1
+
+    def sort_SN_in_page(self, page):
+        return OrderedDict(sorted(page.items(), key=lambda item: item[0]))
 
     def add_page(self):
+        """Adds a new empty page to the buffer."""
         if len(self.BUFFER) < self.BUFFER_SIZE_IN_PAGES:
             self.BUFFER.append(OrderedDict())
-            self.MAX_SN = self.MIN_SN + (self.X.shape[0] * len(self.BUFFER)) - 1
             return True
         if self.warnings:
-            print("The buffer is full, increase the buffer size or this might be an attack on the buffer.")
+            print("The buffer is full, increase the buffer size or this might be an attack to the buffer.")
         return False
 
     def pop_page(self, page_index):
-        if page_index < 0 or page_index >= len(self.BUFFER):
+        """Removes and returns the page at the given index after sorting it by sequence number."""
+        if page_index >= len(self.BUFFER) or page_index < 0:
             if self.warnings:
                 print(f"Page {page_index} is out of range, the buffer size is {len(self.BUFFER)}")
             return None
         if page_index == 0:
             self.PAGE_ZERO_LAST_UPDATE = time.time()
             self.MIN_SN += self.X.shape[0]
-            self.MAX_SN = self.MIN_SN + (self.X.shape[0] * len(self.BUFFER)) - 1
 
-        temp = self.BUFFER[page_index]
-        self.BUFFER.remove(temp)
-        self.add_page()
+        temp = self.sort_SN_in_page(self.BUFFER[page_index])
+        self.BUFFER[page_index] = OrderedDict()  # Reset the popped page
         return temp
 
     def get_page_index_by_SN(self, SN):
@@ -181,28 +192,31 @@ class OptimizedBuffer:
     def is_page_full(self, page_index):
         return len(self.BUFFER[page_index]) == self.X.shape[0]
 
-    def add_msg_to_page(self, SN, msg, mac=b''):
-        if SN < self.MIN_SN or SN > self.MAX_SN:
+    # Three possible return values: None, page, (page, None, SN), (page, (page, None, SN), SN)
+    def add_msg_to_page(self, SN, time_stamp, msg, mac=b''):
+        min_sn, max_sn = self.get_min_allowed_SN(), self.get_max_allowed_SN()
+        if SN < min_sn or SN > max_sn:
             if self.warnings:
-                print(f"SN {SN} is out of range [{self.MIN_SN},{self.MAX_SN}] (Buffer full), increase the buffer size or this might be an attack on the buffer.")
+                print(f"SN {SN} is out of range [{min_sn},{max_sn}] (Buffer full), increase the buffer size or this might be an attack to the buffer.")
             if time.time() - self.PAGE_ZERO_LAST_UPDATE < self.TIMEOUT_SECOND:
-                print(f"The message SN: {SN} is dropped. The buffer is full, and page zero will be kept for {self.TIMEOUT_SECOND - time.time() + self.PAGE_ZERO_LAST_UPDATE} more seconds.")
+                print(f" The message SN: {SN} is dropped. The buffer is full, and page zero will be kept until {self.TIMEOUT_SECOND - time.time() + self.PAGE_ZERO_LAST_UPDATE} more seconds")
                 return None
             else:
-                min_sn = self.get_min_allowed_SN()
                 res = self.pop_page(0)
-                temp = self.add_msg_to_page(SN, msg, mac)
+                temp = self.add_msg_to_page(SN, time_stamp, msg, mac)
                 return res, temp, min_sn
 
         page_index = self.get_page_index_by_SN(SN)
 
-        if SN in self.BUFFER[page_index] and self.warnings:
-            return "Message already exists in the buffer! Replay attack?"
+        if SN in self.BUFFER[page_index]:
+            if self.warnings:
+                print("Message already exists in the buffer! Replay attack?")
+            return None
 
         if page_index == 0:
             self.PAGE_ZERO_LAST_UPDATE = time.time()
 
-        self.BUFFER[page_index][SN] = (msg, mac)
+        self.BUFFER[page_index][SN] = (msg, mac, time_stamp)
 
         if self.is_page_full(page_index):
             return self.pop_page(page_index)
@@ -212,13 +226,13 @@ class OptimizedBuffer:
     def print_buffer(self):
         print(f"{self.MIN_SN} Buffer:", list(self.BUFFER))
 
-# Running a quick test to verify the changes
 
+# Unit test for the buffer
 if __name__ == "__main__":
     X = np.eye(3)
     Y = np.eye(3)
 
-    buffer = OptimizedBuffer(X, Y, BUFFER_SIZE_IN_PAGES=3, TIMEOUT_SECOND=1, warnings=True)
+    buffer = Buffer(X, Y, BUFFER_SIZE_IN_PAGES=3, TIMEOUT_SECOND=1, warnings=True)
 
     print(buffer.get_min_allowed_SN())
     print(buffer.get_max_allowed_SN())
@@ -230,26 +244,26 @@ if __name__ == "__main__":
 
     print(buffer.is_page_full(0))
 
-    print(buffer.add_msg_to_page(7, 'msg7'))
-    print(buffer.add_msg_to_page(3, 'msg3'))
-    print(buffer.add_msg_to_page(0, 'msg0'))
-    print(buffer.add_msg_to_page(1, 'msg1'))
-    print(buffer.add_msg_to_page(2, 'msg2'))
+    print(buffer.add_msg_to_page(7, time.time(), 'msg7'))
+    print(buffer.add_msg_to_page(3, time.time(), 'msg3'))
+    print(buffer.add_msg_to_page(0, time.time(), 'msg0'))
+    print(buffer.add_msg_to_page(1, time.time(), 'msg1'))
+    print(buffer.add_msg_to_page(2, time.time(), 'msg2'))
 
-    print(buffer.add_msg_to_page(4, 'msg4'))
-    print(buffer.add_msg_to_page(5, 'msg5'))
+    print(buffer.add_msg_to_page(4, time.time(), 'msg4'))
+    print(buffer.add_msg_to_page(5, time.time(), 'msg5'))
 
-    print(buffer.add_msg_to_page(6, 'msg6'))
+    print(buffer.add_msg_to_page(6, time.time(), 'msg6'))
 
-    print(buffer.add_msg_to_page(8, 'msg8'))
+    print(buffer.add_msg_to_page(8, time.time(), 'msg8'))
 
-    print(buffer.add_msg_to_page(-1, 'msg0'))
+    print(buffer.add_msg_to_page(-1, time.time(), 'msg0'))
 
-    print(buffer.add_msg_to_page(100, 'msg0'))
+    print(buffer.add_msg_to_page(100, time.time(), 'msg0'))
     time.sleep(1.1)
-    print(buffer.add_msg_to_page(20, 'msg0'))
+    print(buffer.add_msg_to_page(20, time.time(), 'msg0'))
     time.sleep(1.1)
-    print(buffer.add_msg_to_page(100, 'msg0'))
+    print(buffer.add_msg_to_page(100, time.time(), 'msg0'))
 
 
 class UDP_RX:
