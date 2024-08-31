@@ -17,60 +17,56 @@ class UDP_TX:
         self.KEY = KEY
         self.digestmod = digestmod
 
-    # Padding using PKCS7
-    def pad(self,data, chunk_size_Byte = None):
-        if chunk_size_Byte is None:
-            chunk_size_Byte = self.chunk_size_Byte
-        
-        padder = padding.PKCS7(chunk_size_Byte*8).padder()
-        padded_data = padder.update(data) + padder.finalize()
-        return padded_data
-    
-    def unpad(self,data):
-        unpadder = padding.PKCS7(self.chunk_size_Byte*8).unpadder()
-        return unpadder.update(data) + unpadder.finalize()
 
 
     def divide_Bytes_and_pad(self,Bytes, chunk_size_Byte=None):
         if chunk_size_Byte is None:
             chunk_size_Byte = self.chunk_size_Byte
-        
         chunks = [Bytes[i:i + chunk_size_Byte] for i in range(0, len(Bytes), chunk_size_Byte)]
-        # if len(chunks[-1]) != chunk_size_Byte:
-        #     chunks[-1] = self.pad(chunks[-1], chunk_size_Byte)
         return chunks
 
-    def chucks_to_nD_arrangments(self,chunks,chunk_size_Byte = None, X= None):
+    
+    def chucks_to_nD_arrangments(self, chunks, chunk_size_Byte=None, X=None):
         if chunk_size_Byte is None:
             chunk_size_Byte = self.chunk_size_Byte
         if X is None:
             X = self.X
 
-        nD_arrangments = [chunks[i:i + X.shape[0]] for i in range(0, len(chunks), X.shape[0])]
-        if len(nD_arrangments[-1]) != X.shape[0]:
-            for i in range( X.shape[0] - len(nD_arrangments[-1]))  :
-                nD_arrangments[-1].append(b'')
-                # nD_arrangments[-1].append(self.pad(b'',chunk_size_Byte=chunk_size_Byte))
-        return np.array(nD_arrangments)
+        # Calculate the number of full pages
+        num_full_pages = len(chunks) // X.shape[0]
+        total_pages = num_full_pages + (1 if len(chunks) % X.shape[0] != 0 else 0)
+        
+        # Pad the chunks to fit into a full last page if necessary
+        padding_size = total_pages * X.shape[0] - len(chunks)
+        if padding_size > 0:
+            chunks.extend([b''] * padding_size)
 
-    def mac_for_page(self,page, key = None, X = None, Y = None):
-        if key is None:
-            key = self.KEY
-        if X is None:
-            X = self.X
-        if Y is None:
-            Y = self.Y
+        # Reshape into pages of X.shape[0] chunks each
+        nD_arrangements = np.array(chunks, dtype=object).reshape(total_pages, X.shape[0])
         
-        res = {}
-        for msg_index in range(X.shape[0]):
-            res[msg_index] = page[msg_index]
-        
+        return nD_arrangements
+
+    def mac_for_page(self, page, key=None, X=None, Y=None):
+        key = key or self.KEY
+        X = X if X is not None else self.X
+        Y = Y if Y is not None else self.Y
+
+        # Initialize the result dictionary with the page content
+        res = {i: page[i] for i in range(X.shape[0])}
+
+        # Transpose X and Y for more efficient column operations
+        X_transposed = X.T
+        Y_transposed = Y.T
+
+        # Iterate over tag indices
         for tag_index in range(X.shape[1]):
-            selected_blocks = page[X[:, tag_index] == 1]
-            if selected_blocks.size > 0:
-                data = b''.join(selected_blocks)
-                target_index = np.where(Y[:, tag_index] == 1)[0][0]
+            selected_blocks_indices = np.where(X_transposed[tag_index] == 1)[0]
+            if len(selected_blocks_indices) > 0:
+                # Join the selected blocks' data
+                data = b''.join(page[i] for i in selected_blocks_indices)
+                target_index = np.where(Y_transposed[tag_index] == 1)[0][0]
                 res[target_index] = page[target_index] + hmac.new(key, data, digestmod=self.digestmod).digest()
+
         return res
 
     # SN: Sequence Number (4Bytes)
@@ -81,26 +77,31 @@ class UDP_TX:
         time.sleep(0.000001)
 
 
-    def transmit(self, Bytes, attack:list=[]):
+    def transmit(self, Bytes, attack=None):
+        if attack is None:
+            attack = []
 
         SN = 0
         cnt = 0
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
-            chunks = self.divide_Bytes_and_pad(Bytes = Bytes, chunk_size_Byte= self.chunk_size_Byte)
-            pages = self.chucks_to_nD_arrangments(chunks = chunks, chunk_size_Byte= self.chunk_size_Byte, X =  self.X)
+            # Divide Bytes into chunks and arrange them into pages
+            chunks = self.divide_Bytes_and_pad(Bytes, chunk_size_Byte=self.chunk_size_Byte)
+            pages = self.chucks_to_nD_arrangments(chunks, chunk_size_Byte=self.chunk_size_Byte, X=self.X)
 
-            for i in range(len(pages)):
-                page = self.mac_for_page(page=pages[i], key= self.KEY, X= self.X, Y= self.Y)
-                for msg in page.values():
+            # Flatten the pages and their corresponding messages
+            for page in pages:
+                mac_page = self.mac_for_page(page=page, key=self.KEY, X=self.X, Y=self.Y)
+                for msg_index, msg in mac_page.items():
                     if SN in attack:
                         SN += 1
-                        msd = b'ATTACK'+b'0'*(self.chunk_size_Byte-6)
                         continue
-                    self.send_msg(SN, msg, sock, (self.IP,  self.PORT))
+                    self.send_msg(SN, msg, sock, (self.IP, self.PORT))
                     cnt += 1
                     SN += 1
-            ### send the end message this is not secure but it is just for testing
-            sock.sendto(b'END', ( self.IP,  self.PORT))
+            
+            # Send the end message (for testing purposes)
+            sock.sendto(b'END', (self.IP, self.PORT))
+
         return cnt
 
 # unit test
