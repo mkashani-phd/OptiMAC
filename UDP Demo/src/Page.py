@@ -26,6 +26,7 @@ class Page:
         self.packets[SN % self.page_size] = packet
         self.last_update_time = time.time()
         self.occupancy += 1
+        return True
 
     def is_full(self):
         return self.occupancy == self.page_size
@@ -36,6 +37,7 @@ class Page:
         self.min_SN = None
         self.max_SN = None
         self.occupancy = 0
+
 
 
 
@@ -57,34 +59,35 @@ class TestPage(unittest.TestCase):
         """Test adding the first packet."""
         sn = 5
         packet = [sn, 'Hello', b'', time.time()]
-        self.page.add_chunk(sn, packet)
+        self.page.add_packet(sn, packet)
         self.assertEqual(self.page.min_SN, sn - sn % self.page_size, "min_SN should be correctly set after adding the first packet.")
         self.assertEqual(self.page.max_SN, self.page.min_SN + self.page_size, "max_SN should be set correctly based on min_SN and page_size.")
 
     def test_out_of_range_SN(self):
         """Test adding a packet with an out-of-range SN."""
-        self.page.add_chunk(5, [5, 'Hello', b'', time.time()])
-        result = self.page.add_chunk(1, [1, 'Out of range', b'', time.time()])
+        self.page.add_packet(5, [5, 'Hello', b'', time.time()])
+        result = self.page.add_packet(1, [1, 'Out of range', b'', time.time()])
         self.assertFalse(result, "Should return False when SN is out of range.")
 
     def test_duplicate_SN(self):
         """Test adding a duplicate SN packet."""
         sn = 5
         packet = [sn, 'Hello', b'', time.time()]
-        self.page.add_chunk(sn, packet)
-        result = self.page.add_chunk(sn, packet)
+        self.page.add_packet(sn, packet)
+        result = self.page.add_packet(sn, packet)
         self.assertFalse(result, "Should return False when adding a duplicate SN.")
 
     def test_is_full(self):
         """Test the is_full function when the page is full."""
-        self.page.add_chunk(5, [5, 'Hello', b'', time.time()])
-        self.page.add_chunk(6, [6, 'World', b'', time.time()])
-        self.page.add_chunk(4, [4, 'Full', b'', time.time()])
+        self.page.add_packet(5, [5, 'Hello', b'', time.time()])
+        self.page.add_packet(3, [3, 'World', b'', time.time()])
+        self.page.add_packet(4, [4, 'Full', b'', time.time()])
+        print(self.page.packets)
         self.assertTrue(self.page.is_full(), "is_full should return True when the page is full.")
         
     def test_clear_page(self):
         """Test clearing the page."""
-        self.page.add_chunk(5, [5, 'Hello', b'', time.time()])
+        self.page.add_packet(5, [5, 'Hello', b'', time.time()])
         self.page.clear()
         self.assertFalse(self.page.is_full(), "Page should not be full after clearing.")
         self.assertIsNone(self.page.min_SN, "min_SN should be None after clearing the page.")
@@ -92,11 +95,11 @@ class TestPage(unittest.TestCase):
     
     def test_add_packet_after_clear(self):
         """Test adding a packet after clearing the page."""
-        self.page.add_chunk(5, [5, 'Hello', b'', time.time()])
+        self.page.add_packet(5, [5, 'Hello', b'', time.time()])
         self.page.clear()
         sn = 8
         packet = [sn, 'New Data', b'', time.time()]
-        self.page.add_chunk(sn, packet)
+        self.page.add_packet(sn, packet)
         self.assertEqual(self.page.min_SN, sn - sn % self.page_size, "min_SN should be reset correctly after clearing and adding a new packet.")
         # self.assertTrue(np.array_equal(self.page.packets[sn % self.page_size], packet), "The new packet should be correctly added after clearing.")
 
