@@ -1,13 +1,13 @@
-from collections import deque, OrderedDict
 import numpy as np
 import socket
 import hmac
-import struct
 import time
-import Book, Page
+from Book import Page, Packet, SlidingBook
+
+
 
 class UDP_RX:
-    def __init__(self,buffer= None, IP:str ='0.0.0.0', PORT:int = 23422, X = np.eye(3), Y = np.eye(3),  Packet_Payload_Size_Bytes=128, KEY=b"key", digestmod='sha384', BOOK_PAGES = 10):
+    def __init__(self,buffer:SlidingBook= None, IP:str ='0.0.0.0', PORT:int = 23422, X:np.ndarray = np.eye(3), Y:np.ndarray = np.eye(3),  Packet_Payload_Size_Bytes:int=128, KEY:bytes=b"key", digestmod:str='sha384', BOOK_PAGES:int = 10):
         self.IP = IP
         self.PORT = PORT
         self.X = X
@@ -20,53 +20,30 @@ class UDP_RX:
         self.m, self.n = X.shape
 
         if buffer is None:
-            self.BUFFER = Book.SlidingBook(num_pages = self.BOOK_PAGES, page_size = self.m, packet_dim = 4, timeout = 0.0001)
+            self.BUFFER = SlidingBook(num_pages = self.BOOK_PAGES, page_size = self.m, packet_dim = 4, timeout = 0.0001)
         else:
             self.BUFFER = buffer
         
-    def parse_msg(self, data):
-        # Extract sequence number (SN) and timestamp
-        SN = int.from_bytes(data[:4], 'big')
-        time_stamp = struct.unpack('d', data[4:12])[0]
-        # Determine if MAC is included based on the Y matrix
-        has_mac = np.any(self.Y[SN % self.X.shape[0]])
-        # Slice the data accordingly
-        if has_mac:
-            chunk_data = data[12:-self.HAMC_SIZE]
-            mac = data[-self.HAMC_SIZE:]
-        else:
-            chunk_data = data[12:]
-            mac = b''
-        return SN, time_stamp, chunk_data, mac
     
-    def fill_missing_packets_in_page(page:Page.Page):
-        # Convert the first column to integers to find the sequence numbers
-        seq_nums = page.packets[:, 0].astype(int)
-        # Find the missing sequence numbers
-        missing_seq_nums = np.setdiff1d(np.arange(page.min_SN-page.min_SN%page.page_size, page.min_SN-page.min_SN%page.page_size + page.page_size), seq_nums)
-        # Create missing rows with zeros and appropriate values
-        missing_rows = np.array([[str(seq_num).encode(), b'', b'', str(time.time()).encode()] for seq_num in missing_seq_nums])
-        # Combine the original array with the missing rows
-        filled_array = np.vstack(( page.packets, missing_rows))
-        # Sort by the first column (sequence numbers) to maintain order
-        filled_array = filled_array[filled_array[:, 0].astype(int).argsort()]
-        return filled_array
+    def fill_missing_packet_in_page(page: Page.Page) -> Page.Page:
+
+        return page
 
     def receive(self):
-        self.BUFFER.clear_buffer()
+        self.BUFFER.clear_all()
         total_res = {}
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
             sock.bind((self.IP, self.PORT))
             while True:
-                data, addr = sock.recvfrom(4096 + 48)
+                data, addr = sock.recvfrom(4096 + 48 + 4 + 8) 
                 if data == b'END':
                     break
                 
                 # Parse the incoming message
-                SN, time_stamp, chunk_data, mac = self.parse_msg(data)
+                
                 
                 # Add the message to the buffer and process the response
-                res = self.BUFFER.add_msg_to_page(SN, time_stamp, chunk_data, mac)
+                res = self.BUFFER.add_packet(Packet.from_bytes(data))
                 if res is not None:
                     total_res = self.process_buffer_respond(res, total_res)
                     
