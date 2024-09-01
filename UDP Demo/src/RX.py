@@ -61,25 +61,31 @@ class SlidingBook:
     def remove_page(self, page_index):
         if page_index in self.pages:
             page = self.pages.pop(page_index)
-            packets = page.packets.copy()  # Detach packets from the page
-            # Explicitly delete the page to free up memory
-            del page
-            self.global_min_SN += self.page_size
-            self.global_max_SN += self.page_size
+            # packets = page.packets.copy()  # Detach packets from the page
+            # # Explicitly delete the page to free up memory
+            # del page
+            if page_index == self.get_min_page_index():
+                self.global_min_SN += self.page_size
+                self.global_max_SN += self.page_size
             
-            return packets  # Return the detached packets
+            return page  # Return the page
         return None
 
     def add_packet(self, packet):
         SN = int(packet[0])
+        page_index = SN // self.page_size
+
         if SN < self.global_min_SN or SN >= self.global_max_SN:
             min_page_index = self.get_min_page_index()
             page = self.pages.get(min_page_index)
-            if page and page.last_update_time + self.timeout < time.time():  
+            if page and page.last_update_time + self.timeout < time.time(): 
+                page = Page(page_size=self.page_size, packet_dim=self.packet_dim)
+                self.pages[page_index] = page
+                page.add_packet(SN, packet) 
+                self.global_max_SN = page.max_SN - self.page_size
                 return self.remove_page(min_page_index)
             return None
 
-        page_index = SN // self.page_size
         page = self.pages.get(page_index)
         
         if page is None:
@@ -99,7 +105,6 @@ class SlidingBook:
 
 
 
-
 class UDP_RX:
     def __init__(self,buffer= None, IP:str ='0.0.0.0', PORT:int = 23422, X = np.eye(3), Y = np.eye(3),  Packet_Payload_Size_Bytes=128, KEY=b"key", digestmod='sha384', BOOK_PAGES = 10):
         self.IP = IP
@@ -111,9 +116,10 @@ class UDP_RX:
         self.digestmod = digestmod
         self.HAMC_SIZE = hmac.new(KEY, b'', digestmod=digestmod).digest_size
         self.BOOK_PAGES = BOOK_PAGES
+        self.m, self.n = X.shape
 
         if buffer is None:
-            self.BUFFER = SlidingBook(num_pages = self.BOOK_PAGES, page_size = self.X.shape[0], packet_dim = 4, timeout = 0.0001)
+            self.BUFFER = SlidingBook(num_pages = self.BOOK_PAGES, page_size = self.m, packet_dim = 4, timeout = 0.0001)
         else:
             self.BUFFER = buffer
         
@@ -132,12 +138,18 @@ class UDP_RX:
             mac = b''
         return SN, time_stamp, chunk_data, mac
     
-    def fill_missing_in_page_with_zeros(self, page: dict, SN: int):
-        # Create a range of expected sequence numbers
-        expected_sn = range(SN, SN + self.X.shape[0])
-        # Use a dictionary comprehension to fill in the missing sequence numbers
-        page.update({sn: (b'', b'') for sn in expected_sn if sn not in page})
-        return page
+    def fill_missing_packets_in_page(page:Page):
+        # Convert the first column to integers to find the sequence numbers
+        seq_nums = page.packets[:, 0].astype(int)
+        # Find the missing sequence numbers
+        missing_seq_nums = np.setdiff1d(np.arange(page.min_SN-page.min_SN%page.page_size, page.min_SN-page.min_SN%page.page_size + page.page_size), seq_nums)
+        # Create missing rows with zeros and appropriate values
+        missing_rows = np.array([[str(seq_num).encode(), b'', b'', str(time.time()).encode()] for seq_num in missing_seq_nums])
+        # Combine the original array with the missing rows
+        filled_array = np.vstack((arr, missing_rows))
+        # Sort by the first column (sequence numbers) to maintain order
+        filled_array = filled_array[filled_array[:, 0].astype(int).argsort()]
+        return filled_array
 
     def receive(self):
         self.BUFFER.clear_buffer()

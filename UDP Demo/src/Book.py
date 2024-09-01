@@ -61,22 +61,28 @@ class SlidingBook:
             packets = page.packets.copy()  # Detach packets from the page
             # Explicitly delete the page to free up memory
             del page
-            self.global_min_SN += self.page_size
-            self.global_max_SN += self.page_size
+            if page_index == self.get_min_page_index():
+                self.global_min_SN += self.page_size
+                self.global_max_SN += self.page_size
             
             return packets  # Return the detached packets
         return None
 
     def add_packet(self, packet):
         SN = int(packet[0])
+        page_index = SN // self.page_size
+
         if SN < self.global_min_SN or SN >= self.global_max_SN:
             min_page_index = self.get_min_page_index()
             page = self.pages.get(min_page_index)
-            if page and page.last_update_time + self.timeout < time.time():  
+            if page and page.last_update_time + self.timeout < time.time(): 
+                page = Page(page_size=self.page_size, packet_dim=self.packet_dim)
+                self.pages[page_index] = page
+                page.add_packet(SN, packet) 
+                self.global_max_SN = page.max_SN - self.page_size
                 return self.remove_page(min_page_index)
             return None
 
-        page_index = SN // self.page_size
         page = self.pages.get(page_index)
         
         if page is None:
@@ -129,17 +135,23 @@ class TestSlidingBook(unittest.TestCase):
     def test_page_full_clears_properly(self):
         for i in range(10):
             packet = np.array([i, b"message", b"mac", time.time()])
-            self.book.add_packet(packet)
-        
+            print('pages', self.book.add_packet(packet))
+
         self.assertNotIn(0, self.book.pages)
+        self.assertEqual(self.book.global_min_SN, 10)
+        self.assertEqual(self.book.global_max_SN, 40)
     
     def test_timeout_removes_old_page(self):
         packet = np.array([1, b"message", b"mac", time.time()])
         self.book.add_packet(packet)
         time.sleep(0.002)  # sleep longer than the timeout
-        packet_new = np.array([31, b"new_message", b"mac", time.time()])
+        packet_new = np.array([51, b"new_message", b"mac", time.time()])
         self.book.add_packet(packet_new)
         self.assertNotIn(0, self.book.pages)
+        self.assertIn(5, self.book.pages)
+        self.assertEqual(self.book.pages[5].packets[51 % 10][0], b'51')
+        self.assertEqual(self.book.global_min_SN, 10)
+        self.assertEqual(self.book.global_max_SN, 60)
 
     def test_timeout_when_no_page(self):
         time.sleep(0.002)  # sleep longer than the timeout
