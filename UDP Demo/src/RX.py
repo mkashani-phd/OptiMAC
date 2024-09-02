@@ -20,6 +20,8 @@ class UDP_RX:
     def receive(self):
         self.buffer.clear_all()
         total_message = b''
+        total_latency = []
+        total_verification = []
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
             sock.bind((self.IP, self.PORT))
             while True:
@@ -31,12 +33,9 @@ class UDP_RX:
                 if page is not None:
                     reconcatenated_message, verification_counts, latencys = self.page_processor.check_page(page)
                     total_message += reconcatenated_message
-                    print(len(total_message))
-                    # print(f"Verification counts: {verification_counts}")
-                    # print(f"Latency: {latencys}")
-                
-                    
-        return total_message,verification_counts, latencys
+                    total_latency.append(np.average(latencys))
+                    total_verification.append(np.average(verification_counts))                
+        return total_message,total_verification, latencys
 
     
 

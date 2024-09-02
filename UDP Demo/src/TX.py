@@ -44,9 +44,9 @@ class UDP_TX:
         # Use a nested list comprehension to send all packets
             data_to_send = [packet.to_bytes() for page in pages for packet in page.packets if packet is not None]
 
-            # list(map(lambda data: sock.sendto(data, (self.IP, self.PORT)), data_to_send))
-            for data in data_to_send:
-                sock.sendto(data, (self.IP, self.PORT))
+            list(map(lambda data: sock.sendto(data, (self.IP, self.PORT)), data_to_send))
+            # for data in data_to_send:
+            #     sock.sendto(data, (self.IP, self.PORT))
 
             sock.sendto(b'END', (self.IP, self.PORT))
         del self.buffer
