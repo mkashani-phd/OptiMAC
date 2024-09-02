@@ -31,11 +31,12 @@ class UDP_RX:
                 if page is not None:
                     reconcatenated_message, verification_counts, latencys = self.page_processor.check_page(page)
                     total_message += reconcatenated_message
-                    print(f"Verification counts: {verification_counts}")
-                    print(f"Latency: {latencys}")
+                    print(len(total_message))
+                    # print(f"Verification counts: {verification_counts}")
+                    # print(f"Latency: {latencys}")
                 
                     
-        return total_message
+        return total_message,verification_counts, latencys
 
     
 

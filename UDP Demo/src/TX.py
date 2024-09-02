@@ -34,6 +34,7 @@ class UDP_TX:
         list(map(self.page_processor.process_page, res))
 
         return res
+
     
     def transmit(self, pages):
         """
@@ -42,9 +43,11 @@ class UDP_TX:
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
         # Use a nested list comprehension to send all packets
             data_to_send = [packet.to_bytes() for page in pages for packet in page.packets if packet is not None]
-            # Send all packets at once using map
-            list(map(lambda data: sock.sendto(data, (self.IP, self.PORT)), data_to_send))
-            # Clear all pages after transmission
+
+            # list(map(lambda data: sock.sendto(data, (self.IP, self.PORT)), data_to_send))
+            for data in data_to_send:
+                sock.sendto(data, (self.IP, self.PORT))
+
             sock.sendto(b'END', (self.IP, self.PORT))
         del self.buffer
     
