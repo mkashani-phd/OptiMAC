@@ -19,6 +19,7 @@ class UDP_RX:
 
     def receive(self):
         self.buffer.clear_all()
+        # total_message =  {}
         total_message = b''
         total_latency = []
         total_verification = []
@@ -32,10 +33,12 @@ class UDP_RX:
                 page = self.buffer.add_packet(Packet.from_bytes(data))
                 if page is not None:
                     reconcatenated_message, verification_counts, latencys = self.page_processor.check_page(page)
+                    # total_message [page.min_SN] = reconcatenated_message
                     total_message += reconcatenated_message
                     total_latency.append(np.average(latencys))
-                    total_verification.append(np.average(verification_counts))                
-        return total_message,total_verification, latencys
+                    total_verification.append(np.average(verification_counts))   
+        # total_message = b''.join(total_message.values())            
+        return total_message,total_verification, total_latency
 
     
 
