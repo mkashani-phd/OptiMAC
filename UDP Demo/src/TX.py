@@ -48,6 +48,9 @@ class UDP_TX:
             for data in data_to_send:
                 if np.random.random() > attack_probability:
                     sock.sendto(data, (self.IP, self.PORT))
+                else:
+                    attack_message = b"ATTACK"
+                    sock.sendto(data[0:4+8]+attack_message, (self.IP, self.PORT))
                 
 
             sock.sendto(b'END', (self.IP, self.PORT))
