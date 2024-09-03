@@ -36,8 +36,8 @@ class UDP_RX:
                     reconcatenated_message, verification_counts, latencys = self.page_processor.check_page(page)
                     total_message [page.min_SN] = reconcatenated_message
                     # res += reconcatenated_message
-                    total_latency.append(np.average(latencys))
-                    total_verification.append(np.average(verification_counts))
+                    total_latency.append(np.nanmean(latencys))
+                    total_verification.append(np.nanmean(verification_counts))
         # join the messages form low SN to high SN
         res = b''.join([total_message[key] for key in sorted(total_message.keys())])  
         del total_message  

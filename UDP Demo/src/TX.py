@@ -23,7 +23,7 @@ class UDP_TX:
         if payload_size is None:
             payload_size = self.Payload_Size_Byte
         
-        
+        # print(f"payload_size: {payload_size}, len(input_bytes): {len(input_bytes)}, -(-len(input_bytes) // payload_size): {-(-len(input_bytes) // payload_size)}")
         num_packets = -(-len(input_bytes) // payload_size)  # Efficiently calculate the number of packets
         segments = [input_bytes[i*payload_size:(i+1)*payload_size] for i in range(num_packets)]
         packets = [Packet(SN=i, message=segment) for i, segment in enumerate(segments)]
