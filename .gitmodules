@@ -1,8 +1,3 @@
 [submodule "UDP Demo/src/nD_MAC"]
 	path = UDP Demo/src/nD_MAC
 	url = git@github.com:mkashani-phd/nD_MAC.git
-
-[submodule "UDP Demo/src/nD_MAC/src/Book"]
-	path = UDP Demo/src/nD_MAC/src/Book
-	url = git@github.com:mkashani-phd/Book.git
-
