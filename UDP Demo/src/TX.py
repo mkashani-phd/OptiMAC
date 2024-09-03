@@ -42,15 +42,16 @@ class UDP_TX:
         """
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
         # Use a nested list comprehension to send all packets
-            data_to_send = [packet.to_bytes() for page in pages for packet in page.packets if packet is not None]
+            packets_to_send = [packet for page in pages for packet in page.packets if packet is not None]
 
             # list(map(lambda data: sock.sendto(data, (self.IP, self.PORT)), data_to_send))
-            for data in data_to_send:
+            for packet in packets_to_send:
                 if np.random.random() > attack_probability:
-                    sock.sendto(data, (self.IP, self.PORT))
+
+                    sock.sendto(packet.to_bytes(), (self.IP, self.PORT))
                 else:
                     attack_message = b"ATTACK"
-                    sock.sendto(data[0:4+8]+attack_message, (self.IP, self.PORT))
+                    sock.sendto(packet.to_bytes()[0:4+8]+attack_message, (self.IP, self.PORT))
                 
 
             sock.sendto(b'END', (self.IP, self.PORT))
