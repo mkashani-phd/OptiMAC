@@ -40,6 +40,48 @@ def ProMAC_X(M, x):
     
     return matrix
 
+
+def find_augmenting_path(X, u, match_from_V2_to_V1, visited):
+    for v in range(len(X[0])):
+        if X[u][v] == 1 and not visited[v]:
+            visited[v] = True
+            if match_from_V2_to_V1[v] == -1 or find_augmenting_path(X, match_from_V2_to_V1[v], match_from_V2_to_V1, visited):
+                match_from_V2_to_V1[v] = u
+                return True
+    return False
+
+def Get_Y(X):
+    # Number of vertices in V1 and V2
+    V1_size = len(X)
+    V2_size = len(X[0])
+
+    # Array to store the match from V2 to V1, initialized to -1 (no match)
+    match_from_V2_to_V1 = [-1] * V2_size
+
+    # Try to find a match for every node in V1
+    for u in range(V1_size):
+        visited = [False] * V2_size  # Keeps track of visited nodes in V2 for each attempt
+        find_augmenting_path(X, u, match_from_V2_to_V1, visited)
+
+    # Check if we found a right-perfect matching
+    if all(x != -1 for x in match_from_V2_to_V1):
+        # Create the result matrix Y
+        Y = np.zeros_like(X)
+        for j in range(V2_size):
+            Y[match_from_V2_to_V1[j]][j] = 1
+        return Y
+    else:
+        return None
+
+# # Example usage:
+# X = np.array([
+#     [1, 1],
+#     [1, 0]
+# ])
+# Y = maximum_matching(X)
+# print(Y)  # Expected Output: [[0, 1], [1, 0]] or similar valid configurations
+
+
 def Create_Experiment(parameters,X):
     return {'results': {'X': X}, 'parameters':parameters, 'eval': evaluate({'results': {'X': X}, 'parameters':parameters}, 1024, 256)}
 
