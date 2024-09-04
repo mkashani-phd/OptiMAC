@@ -38,6 +38,7 @@ class UDP_RX:
                     # res += reconcatenated_message
                     total_latency.append(np.nanmean(latencys) if len(latencys) != 0 else np.nan)    
                     total_verification.append(np.nanmean(verification_counts) if len(verification_counts) != 0 else np.nan)
+            sock.close()
         # join the messages form low SN to high SN
         res = b''.join([total_message[key] for key in sorted(total_message.keys())])  
         del total_message  
