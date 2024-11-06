@@ -1,6 +1,7 @@
 from .nD_MAC import MACGenerator, SlidingBook, Packet
 import numpy as np
 import socket
+import time
 
 
 # The UDP_TX class is responsible for transmitting data over the network using the UDP protocol.
@@ -36,7 +37,7 @@ class UDP_TX:
         return res
 
     
-    def transmit(self, pages, attack_probability:float = 0 ):
+    def transmit(self, pages, attack_probability:float = 0 , delay:float = 0.00):
         """
         Transmit all packets stored in the SlidingBook over UDP.
         """
@@ -49,9 +50,12 @@ class UDP_TX:
                 if np.random.random() > attack_probability:
 
                     sock.sendto(packet.to_bytes(), (self.IP, self.PORT))
+                    time.sleep(delay)
                 else:
                     attack_message = b"ATTACK"
                     sock.sendto(packet.to_bytes()[0:4+8]+attack_message, (self.IP, self.PORT))
+                    time.sleep(delay)
+
                 
 
             sock.sendto(b'END', (self.IP, self.PORT))
