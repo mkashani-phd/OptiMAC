@@ -88,10 +88,36 @@ def Save_Experiment(experiment, filePath = 'Xs.pkl'):
         pickle.dump(experiments, f)
     print("Experiment saved as experiment number",experiment_nr)
 
+    
+
+# def Del_Experiment(indx:int = -1, experiment = None, filePath = 'Xs.pkl'):
+#     try:
+#         with open(filePath, 'rb') as f:
+#             experiments = pickle.load(f)
+#     except:
+#         print("No pickle file found to delete experiment from")
+#         return
+
+#     #check if the experiment is already saved
+#     if experiment is not None:
+#         if Check_Experiment(parameters=experiment['parameters']) is not None:
+#             print("didn't find the experiment to delete")
+#             return
+    
+#     with open(filePath, 'wb') as f:
+#         experiments.pop(indx)
+#         pickle.dump(experiments, f)
+#     print("Experiment saved as experiment number",experiment_nr)
+
+
+
 def Load_Experiments(filePath = 'Xs.pkl'):
     import pickle
     with open(filePath, 'rb') as f:
         return pickle.load(f)
+    
+
+
 
 
 def Run_Experiment(model, parameters:dict, eval, m_size, t_size, save:bool = True):
