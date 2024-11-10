@@ -50,11 +50,11 @@ class UDP_TX:
                 if np.random.random() > attack_probability:
 
                     sock.sendto(packet.to_bytes(), (self.IP, self.PORT))
-                    time.sleep(delay)
+                    # time.sleep(delay)
                 else:
                     attack_message = b"ATTACK"
                     sock.sendto(packet.to_bytes()[0:4+8]+attack_message, (self.IP, self.PORT))
-                    time.sleep(delay)
+                    # time.sleep(delay)
 
                 
 
