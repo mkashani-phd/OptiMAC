@@ -1,8 +1,8 @@
 # OptiMAC: Robust Optimization Framework for MAC Aggregation in Adversarial Environments
 
-OptiMAC is a novel optimization framework designed to enhance the integrity and efficiency of Message Authentication Code (MAC) aggregation schemes. By systematically optimizing tag-to-message assignments, OptiMAC achieves superior performance, balancing security and efficiency in wireless communication networks under adversarial conditions.
+OptiMAC is a novel optimization framework designed to enhance the integrity and efficiency of Message Authentication Code (MAC) aggregation schemes. By systematically optimizing tag-to-message assignments, OptiMAC achieves superior performance, balancing security (number of tag-bits per message (TbpM)) and efficiency in wireless communication networks under adversarial conditions.
 
-  <img src="./UDP%20Demo/img/WiFi/0.1SG.png" width="550" >
+  <img src="./UDP%20Demo/img/WiFi/0.1SG.png" width="500" >
 
 ---
 
@@ -159,10 +159,10 @@ cd optiMAC
 ## Results
 
 OptiMAC achieves:
-- Enhanced security by increasing **Tag-bits per Message (TbpM)** at lower **tag-to-message ratio**.
+- Enhanced security by increasing **Tag-bits per Message (TbpM)** (x-axis) at lower **tag-to-message ratio (TMR)** (y-axis).
   
   <img src="./UDP%20Demo/img/WiFi/0.1S'.png" width="400" >
-- Higher **Goodput** at low **tag-to-message ratio**.
+- Higher **Goodput** at low **TMR** (y-axis).
 
   <img src="./UDP%20Demo/img/WiFi/0.1G'.png" width="400" >
 - Resilience against adversarial attacks, such as jamming and DoS.
