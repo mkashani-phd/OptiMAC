@@ -2,6 +2,8 @@
 
 OptiMAC is a novel optimization framework designed to enhance the integrity and efficiency of Message Authentication Code (MAC) aggregation schemes. By systematically optimizing tag-to-message assignments, OptiMAC achieves superior performance, balancing security and efficiency in wireless communication networks under adversarial conditions.
 
+  <img src="./UDP%20Demo/img/WiFi/0.1SG.png" width="550" >
+
 ---
 
 ## Key Features
@@ -72,39 +74,85 @@ cd optiMAC
 
 ### Optimization
 1. Navigate to the `Optimizer/` directory.
-2. Modify the parameters in `optimizer.ipynb` or `TagModel.lp`.
-3. Run the script:
-   ```bash
-   python optimize.py
-   ```
+2. Modify the parameters in `optimizer.ipynb`.
+    ```python
+    parameters = {'m_nr': 25, 't_nr': 25, 
+                  'p': 0.95, 'q': 1, 
+                  'TagEveryMessage': True, 
+                  'AtLeastOnce': False, 
+                  'EquivalentA': True}
+    ```
+3. Run the optimizer to maximize the tag-bits per message
+    ```python
+    exp = utils.Run_Experiment(model        = model.math_model,
+                                parameters   = parameters,
+                                eval         = Auth.evaluate,
+                                m_size       = 1024,
+                                t_size       = 256,
+                              save         = True)
+    exp['eval']
+    ```
+    or  Run the optimizer to maximize the tag-bits per message and minimize the latency
+    ```python
+    parameters['weight_A'] =  5
+    parameters['weight_L'] =  .1
+
+    exp = utils.Run_Experiment(model = model_latency.math_model,
+                                parameters = parameters,
+                                eval=Auth.evaluate,
+                                save=True,
+                                m_size=1024,
+                                t_size=256)
+        exp['eval']
+    ```
 
 ### Simulation
 1. Use `Simulation/2D_MAC.m` in MATLAB for custom analysis.
 2. Alternatively, run `Simulation.ipynb` in Python for simulation-based exploration.
 
 ### UDP Demo
-1. Configure WiFi or 5G parameters in the `UDP Demo/` directory.
-2. Transmit data using:
-   ```bash
-   python tx.py
+1. Setup a WiFi or 5G tesbed.
+2. Receive data using `rx.ipynb`:
+   ```python
+    #### parameters that needs to be exhanged between the sender and the receiver #####
+    IP = "0.0.0.0"
+    PORT = 23422
+    #################################################################################### 
+
+    while True:
+      os.system('python3 rx.py ' + "\'" + json.dumps({'IP': IP, 'PORT': PORT}) + "\'")
    ```
-3. Receive data using:
-   ```bash
-   python rx.py
-   ```
+3. Transmit data using `tx.ipynb`:
+   ```python
+    #### receiver IP & PORRT ######
+    IP = "rx IP"
+    PORT = 23422
+    ###############################
+
+    param = create_param(X = X, Y = Y, 
+                          KEY="key", 
+                          DIGESTMOD=digest, 
+                          PAYLOAD_SIZE_BYTE=payload_size, 
+                          QUALITY=quality, 
+                          ATTACK_PROBABILITY=attack_prob, 
+                          DURATION=Duration, DELAY=0)
+
+    if param is not None:
+        args = {'IP': IP, 'PORT': PORT, 'param': param}
+        os.system("python3 tx.py \'"+json.dumps(args)+"\'")
+    ```
 
 ---
 
 ## Experimental Setup
 
 ### WiFi Testbed
-- **Hardware**: WiFi hotspot, Logitech HD Pro Webcam
+- **Hardware**: WiFi hotspot, Webcam
 - **Software**: Linux
 
 ### 5G Testbed
-- **Hardware**: USRP B210 SDRs, OpenAirInterface, Open5GS
-- **Software**: Ubuntu 22.04 LTS
-- **Protocol**: 5G Core Network
+- **Hardware**: USRP B210 SDRs, OpenAirInterface, Open5GS, Webcam
+- **Software**: Linux
 
 ---
 
@@ -112,7 +160,11 @@ cd optiMAC
 
 OptiMAC achieves:
 - Enhanced security by increasing **Tag-bits per Message (TbpM)** at lower **tag-to-message ratio**.
+  
+  <img src="./UDP%20Demo/img/WiFi/0.1S'.png" width="400" >
 - Higher **Goodput** at low **tag-to-message ratio**.
+
+  <img src="./UDP%20Demo/img/WiFi/0.1G'.png" width="400" >
 - Resilience against adversarial attacks, such as jamming and DoS.
 
 Experimental results are available in the `Analyzing_Results.ipynb` files within `UDP Demo`.
