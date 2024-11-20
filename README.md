@@ -188,4 +188,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## References
 
-1. Armknecht et al., "Progressive MACs for Continuous Efficient Authentication of Message Streams," CCS '20.
+1. Armknecht et al., "ProMACs: Progressive and Resynchronizing MACs for Continuous Efficient Authentication of Message Streams" CCS '20.
