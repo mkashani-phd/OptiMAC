@@ -60,10 +60,10 @@ pip install -r requirements.txt
 You also need the openCV and the Gurobi if you want to runt the UDP and run the optimizer, respectively.
 
 ### Setup
-Clone the repository:
+Clone the repository with submodules that support the UDP demo test:
 ```bash
-git clone https://github.com/mkashani-phd/OptiMAC.git
-cd OptiMAC
+git clone --recurse-submodule git@github.com:mkashani-phd/optiMAC.git
+cd optiMAC
 ```
 
 ---
