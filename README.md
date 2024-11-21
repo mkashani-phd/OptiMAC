@@ -159,7 +159,7 @@ cd optiMAC
 ## Results
 
 OptiMAC achieves:
-- Enhanced security by increasing **Tag-bits per Message (TbpM)** (x-axis) at lower **tag-to-message ratio (TMR)** (y-axis).
+- Enhanced security by increasing **Tag-bits per Message (TbpM)** (x-axis) at lower **tag-to-message ratio (TMR)** (y-axis). The optiMAC is shown in blue with the text indicating the corresponding TMR. The State-Of-The-Art is shown in red which includes the traditional MAC, Progressive MAC, and AGG MAC.
   
   <img src="./UDP%20Demo/img/WiFi/0.1S'.png" width="400" >
 - Higher **Goodput** at low **TMR** (y-axis).
