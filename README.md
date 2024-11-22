@@ -1,4 +1,4 @@
-# OptiMAC: Robust Optimization Framework for MAC Aggregation in Adversarial Environments
+# optiMAC: Robust Optimization Framework for MAC Aggregation in Adversarial Environments
 
 OptiMAC is a novel optimization framework designed to enhance the integrity and efficiency of Message Authentication Code (MAC) aggregation schemes. By systematically optimizing tag-to-message assignments, OptiMAC achieves superior performance, balancing security (number of tag-bits per message (TbpM)) and efficiency in wireless communication networks under adversarial conditions.
 
