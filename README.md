@@ -59,8 +59,8 @@ You also need the openCV and the Gurobi if you want to runt the UDP and run the 
 ### Setup
 Clone the repository with submodules that support the UDP demo test:
 ```bash
-git clone --recurse-submodule git@github.com:mkashani-phd/optiMAC.git
-cd optiMAC
+git clone --recurse-submodule git@github.com:mkashani-phd/OptiMAC.git
+cd OptiMAC
 ```
 
 ---
