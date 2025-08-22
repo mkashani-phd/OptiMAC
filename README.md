@@ -1,4 +1,4 @@
-# OptiMAC: Robust Optimization Framework for MAC Aggregation in Adversarial Environments
+# optiMAC: Robust Optimization Framework for MAC Aggregation in Adversarial Environments
 
 OptiMAC is a novel optimization framework designed to enhance the integrity and efficiency of Message Authentication Code (MAC) aggregation schemes. By systematically optimizing tag-to-message assignments, OptiMAC achieves superior performance, balancing security (number of tag-bits per message (TbpM)) and efficiency in wireless communication networks under adversarial conditions.
 
@@ -154,7 +154,7 @@ cd optiMAC
 ## Results
 
 OptiMAC achieves:
-- Enhanced security by increasing **Tag-bits per Message (TbpM)** (x-axis) at lower **tag-to-message ratio (TMR)** (y-axis).
+- Enhanced security by increasing **Tag-bits per Message (TbpM)** (x-axis) at lower **tag-to-message ratio (TMR)** (y-axis). The optiMAC is shown in blue with the text indicating the corresponding TMR. The State-Of-The-Art is shown in red which includes the traditional MAC, Progressive MAC, and AGG MAC.
   
   <img src="./UDP%20Demo/img/WiFi/0.1S'.png" width="400" >
 - Higher **Goodput** at low **TMR** (y-axis).
@@ -183,4 +183,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## References
 
-1. Armknecht et al., "Progressive MACs for Continuous Efficient Authentication of Message Streams," CCS '20.
+1. Armknecht et al., "ProMACs: Progressive and Resynchronizing MACs for Continuous Efficient Authentication of Message Streams" CCS '20.

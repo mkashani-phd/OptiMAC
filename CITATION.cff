@@ -1,23 +1,4 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 authors:
-- family-names: "Kashani"
-  given-names: "SeyedMohammad"
-  orcid: "https://orcid.org/0009-0005-9232-0451"
-- family-names: "Emirhuseyinoglu"
-  given-names: "Gorkem"
-- family-names: "Khademnia"
-  given-names: "Erfan"
-- family-names: "Dong"
-  given-names: "Yilu"
-- family-names: "Wu"
-  given-names: "Tainwei"
-- family-names: "Rafiul"
-  given-names: "Syed Hussain"
-- family-names: "Kim"
-  given-names: "Sang Wu"
-title: "MAC Aggregation Optimization"
-version: 0.0.1
-doi: 
-date-released: 2024-06-15
-url: "https://github.com/mkashani-phd/optiMAC.git"
+removed for submision
