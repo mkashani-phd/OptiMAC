@@ -194,35 +194,35 @@ def  Get_Strength_Number(experiment):
             result.append(i+1)
     return result
 
-def Goodput(experiment,m,t,m_size=1024,t_size=256, tagAdjustment = False):
+def Goodput(experiment,m,t,m_size=1024,t_size=256, security_requirments = 256):
     X = experiment['results']['X']
     p = experiment['parameters']['p']
     q = experiment['parameters']['q']
 
     m_nr,t_nr = X.shape
     A = Validate(experiment,m,t)
-    A = A*t_size >= 256
+    A = A*t_size >= security_requirments
 
-    if np.random.rand() < 0.01:
-        print(A*t_size )
+    # if np.random.rand() < 0.01:
+    #     print(A*t_size )
 
-    if tagAdjustment:
-        EA = np.average(Validate(experiment,np.array([p]*m_nr),np.array([q]*t_nr)))
-        if EA < 1:
-            EA = 1
-        return (np.sum(A)*m_size)/(np.sum(m>0)*m_size + int(t_size/EA)*t_nr)
-    else:
-        return (np.sum(A)*m_size)/(np.sum(m>0)*m_size + t_nr*t_size)
+    # if tagAdjustment:
+    #     EA = np.average(Validate(experiment,np.array([p]*m_nr),np.array([q]*t_nr)))
+    #     if EA < 1:
+    #         EA = 1
+    #     return (np.sum(A)*m_size)/(np.sum(m>0)*m_size + int(t_size/EA)*t_nr)
+    # else:
+    return (np.sum(A)*m_size)/(np.sum(m>0)*m_size + t_nr*t_size)
 
-def SecurityRate(experiment,m,t,t_size, b = None):
+def SecurityRate(experiment,m,t,t_size):
     m_nr,t_nr = experiment['parameters']['m_nr'], experiment['parameters']['t_nr']
-    if b is None:
-        p = experiment['parameters']['p']
-        q = experiment['parameters']['q']
-        EA = np.average(Validate(experiment, np.array([p]*m_nr), np.array([q]*t_nr)))
-        b = t_size
-        if EA > 1:
-            t_size = b/EA
+    # if b is None:
+    #     p = experiment['parameters']['p']
+    #     q = experiment['parameters']['q']
+    #     EA = np.average(Validate(experiment, np.array([p]*m_nr), np.array([q]*t_nr)))
+    #     b = t_size
+    #     if EA > 1:
+    #         t_size = b/EA
     A = Validate(experiment,m,t)
 
     return np.average(A[m!=0]*t_size)
@@ -236,7 +236,7 @@ def SecurityRate(experiment,m,t,t_size, b = None):
 # matrix = ProMAC_X(M, x)
 # print(matrix)
 
-def evaluate(experiment, m_size, t_size, b = None, plot = False):
+def evaluate(experiment, m_size, t_size, security_requirments = 256, plot = False):
     X = experiment['results']['X']
     p = experiment['parameters']['p']
     q = experiment['parameters']['q']
@@ -257,9 +257,8 @@ def evaluate(experiment, m_size, t_size, b = None, plot = False):
     eval = {'A': A, 'L': L, 
             'average_A': np.average(A), 'average_L': np.average(L),
             'computation_(tag to message ratio)':n/m,
-            'goodput_without_tag_adjustment': Goodput(experiment, np.ones(m), np.ones(n), tagAdjustment=False, m_size=m_size, t_size=t_size),
-            'goodput_with_tag_adjustment': Goodput(experiment, np.ones(m), np.ones(n), tagAdjustment=True, m_size=m_size, t_size= t_size if b is None else b),
-            'security_goodput': SecurityRate(experiment, np.array([p]*m), np.array([q]*n),b = b, t_size = t_size),
+            'goodput_without_tag_adjustment': Goodput(experiment, np.ones(m), np.ones(n),  m_size=m_size, t_size=t_size, security_requirments=security_requirments),
+            'security_goodput': SecurityRate(experiment, np.array([p]*m), np.array([q]*n), t_size = t_size),
             'rows_that_breaks_the_verification': Get_Strength_Number(experiment)}
     #pretty print the eval dictionary
     if plot:
