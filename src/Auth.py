@@ -201,26 +201,31 @@ def Goodput(experiment,m,t,m_size=1024,t_size=256, tagAdjustment = False):
 
     m_nr,t_nr = X.shape
     A = Validate(experiment,m,t)
-    A = A>0
+    A = A*t_size >= 256
+
+    if np.random.rand() < 0.01:
+        print(A*t_size )
+
     if tagAdjustment:
         EA = np.average(Validate(experiment,np.array([p]*m_nr),np.array([q]*t_nr)))
         if EA < 1:
             EA = 1
-        return (np.sum(A)*m_size)/(m_nr*m_size + int(t_size/EA)*t_nr)
+        return (np.sum(A)*m_size)/(np.sum(m>0)*m_size + int(t_size/EA)*t_nr)
     else:
-        return (np.sum(A)*m_size)/(m_nr*m_size + t_nr*t_size)
+        return (np.sum(A)*m_size)/(np.sum(m>0)*m_size + t_nr*t_size)
 
 def SecurityRate(experiment,m,t,t_size, b = None):
-    m_nr,t_nr = experiment['parameters']['m_nr'],experiment['parameters']['t_nr']
+    m_nr,t_nr = experiment['parameters']['m_nr'], experiment['parameters']['t_nr']
     if b is None:
         p = experiment['parameters']['p']
         q = experiment['parameters']['q']
-        EA = np.average(Validate(experiment,np.array([p]*m_nr),np.array([q]*t_nr)))
+        EA = np.average(Validate(experiment, np.array([p]*m_nr), np.array([q]*t_nr)))
         b = t_size
         if EA > 1:
             t_size = b/EA
     A = Validate(experiment,m,t)
-    return np.sum(A)*t_size/(m_nr*b)
+
+    return np.average(A[m!=0]*t_size)
 
 
 

@@ -12,12 +12,7 @@ OptiMAC is a novel optimization framework designed to enhance the integrity and 
 - **Simulation Tools**: MATLAB and Python tools for analyzing different MAC configurations.
 - **Real-World Demonstration**: Includes a UDP-based demo for WiFi and 5G networks with jamming resilience.
 - **Custom Metrics**: Includes Goodput, Tag-bits per Message (TbpM), and Strength Number (SN) for evaluating performance.
-
----
-
-## Repository Structure
-
-### Core Directories
+ 
 
 - **`img/`**: Contains documentation diagrams and visualizations.
   - `MAC.drawio`, `ProMAC_Graph.ipynb`: Illustrations of MAC dependencies.
