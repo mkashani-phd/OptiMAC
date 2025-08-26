@@ -27,8 +27,8 @@ def math_model(m_nr=10, t_nr=10, p=1, q=1, TagEveryMessage=True, AtLeastOnce=Fal
     try:
         m = gp.Model("TagModel")
         # m.setParam('OutputFlag', 0)
-        m.setParam(GRB.Param.TimeLimit, 21600)
-        #m.setParam(GRB.Param.MIPGap, 0.01)
+        m.setParam(GRB.Param.TimeLimit, 720)
+        # m.setParam(GRB.Param.MIPGap, 0.02)
         #m.setParam(GRB.Param.MIPFocus, 2)
         
         #Create Variables
