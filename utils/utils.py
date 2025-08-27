@@ -74,7 +74,7 @@ def Save_Experiment(experiment, filePath = 'Xs.pkl'):
     try:
         with open(filePath, 'rb') as f:
             experiments = pickle.load(f)
-            experiment_nr = len(experiments)
+            experiment_nr = max(list(experiments.keys()))+1
             experiments[experiment_nr]=experiment
     except:
         experiment_nr = 0
