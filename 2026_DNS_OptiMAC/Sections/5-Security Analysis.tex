@@ -1,0 +1,43 @@
+The security foundation of the optiMAC builds upon the methodologies established in the Progressive MAC framework as discussed in Armknecht et al.~\cite{ProMAC1}. The formal security properties and resilience of progressive MAC have been rigorously analyzed, providing strong guarantees against various attack vectors, including forgery and replay attacks in high data rate, resource-limited environments. Additionally, the security of aggregated MAC techniques was validated in the work by Boneh et al.~\cite{boneh2003aggregate}, which provides theoretical backing for the aggregation of MAC tags while preserving authentication and integrity.
+% --- Minimal preamble bits (add once if not already present) ---
+% \usepackage{amsthm,amsmath,amssymb}
+% \newtheorem{theorem}{Theorem}
+% \newtheorem{proposition}{Proposition}
+% \newcommand{\Gen}{\mathsf{Gen}}
+% \newcommand{\Init}{\mathsf{Init}}
+% \newcommand{\Upd}{\mathsf{Upd}}
+% \newcommand{\Sig}{\mathsf{Sig}}
+% \newcommand{\Vrfy}{\mathsf{Vrfy}}
+
+% ================= Security (Short Version) =================
+
+% In our framework, we refrain from replicating these security proofs; instead, we rely on the progressive MAC security model, which has been formally verified. By mapping the tag-to-message assignment to the dependency graph, we offer a systematic approach to optimizing parameters like tag generation and update rules, previously determined heuristically in progressive MAC. On the other hand, optiMAC, by utilizing a mathematical model, allows for adaptive, context-aware parameter selection that further enhances the resilience of our MAC scheme against various attacks, including denial of service (DoS), jamming, and packet forgery.
+
+% \subsection{Attack Prevention}
+
+% In this section, we analyze how our novel scheme effectively mitigates the following attack types:
+
+
+% \textbf{Forgery Attacks:} Leveraging the progressive MAC formal definition, our framework ensures that each message within a stream cannot be successfully altered without detection due to the dependency between messages and tags. This dependency makes selective forgery increasingly difficult for attackers, as the scheme requires the forgery of multiple tags to avoid detection, thereby raising the computational effort for each forged packet.
+    
+% \textbf{Replay Attacks:} Similar to progressive MAC~\cite{ProMAC1}, every packet may depend on other packets, preventing attackers from reusing old tags or packets sequences. The scheme ensures that even if an attacker attempts to replay messages, the tag verification will fail unless it matches the correct sequence and state.
+
+% \textbf{Random Jamming and DoS Attacks:} Our approach supports resilience against random jamming by minimizing the impact of packet loss on the integrity of the message stream. By implementing a dependency graph-based tag assignment, our scheme allows the system to verify each message with maximum number of tags even under random jamming conditions. Ensuring that the impact of DoS attempts on message verification is limited.
+
+% \textbf{Targeted Jamming Attacks:} While standard aggregated MAC schemes are vulnerable to targeted jamming. Optimally choosing message-to-tag assignment could mitigate this issue.
+% % \moh{I don't knokw if this is a good idea to include the targeted jamming attacks}
+
+% % Our security approach addresses these threats within the current scope, while future research will focus on further optimizing for both latency and security metrics concurrently.
+
+
+
+% % Golomb ruler thing
+% % Paper x introduces Golomb ruler to avoid causing patterns when creating the tags. In our framework given that the 
+
+% % Forward Secrecy thing
+
+
+% % berin be martin henze k nemitune ba attack rate khodesho behtar kone 
+
+
+

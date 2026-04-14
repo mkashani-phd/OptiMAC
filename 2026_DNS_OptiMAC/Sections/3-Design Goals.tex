@@ -1,0 +1,25 @@
+The security of integrity checks is fundamentally dependent on the length of the MAC employed; this is also referred to as the security level in~\cite{ProMAC1}. In the conventional approach, enhancing security involves utilizing larger tags, which incurs additional overhead. Instead of merely increasing the length or number of tags, we focus on optimizing tag-to-message dependencies to effectively enhance performance and security without increasing the actual tag length or the total number of tags. The followings will summarize our design goals.
+
+\noindent\textbf{G1: High Goodput.}  A high-goodput system maximizes the message bits that have been verified above the required security threshold while at the same time minimizing the total tag bits transmitted.
+
+\noindent\textbf{G2: Meeting Security Level Requirements.} Increasing the number of tag bits per message results in an exponential enhancement of integrity check security~\cite{ProMAC1}. Increasing the tag length above some threshold would be unnecessary for practical application and would have a reverse effect on the goodput performance. Thus, the tag length must be optimized in a way that maximizes the goodput while maintaining the security requirements. 
+% While the Whips algorithm leverages this concept and reduces the tag size~\cite{ProMAC1}, it does it in a heuristic manner and does not necessarily meet the security level requirement in adversarial scenarios. In contrast, an ideal approach would determine the optimal tag length balancing security and goodput.
+
+
+\noindent\textbf{G3: Systematic, Adversary-Aware Optimization.}
+A desirable MAC scheme should offer a principled, model-driven procedure, rather than heuristic tuning, for operation under lossy and adversarial conditions. Given fixed operating parameters (number of messages, number of tags, and a loss/jamming probability), it should systematically compute the optimum message-to-tag assignment, and thereafter finds the optimum tag length to maximizes the goodput of the system.
+
+
+\noindent\textbf{G4: Flexible Tag-to-Message Ratio.} 
+The system should support arbitrary effective average tags per message (e.g., $2/3$), rather than only the reciprocal ratios ($1/g$) imposed by rigid grouping of the Aggregate MAC.
+
+
+% While MILP is known to be NP-hard and may require significant computation time, we address this challenge by precomputing solutions for various parameter configurations. As soon as an environment change is detected, the system can immediately switch to the corresponding precomputed solution.
+
+ % To achieve this, we introduce a novel mapping of tag-to-message assignments to a graph denoted as the dependency graph. The utilization of the dependency graph facilitates the analysis and optimization of the dependencies between messages and their assigned tags. Our systematic approach guarantees optimal security under varying channel conditions for any given number of messages and tags.
+
+% Since the framework that is presented in this paper assumes the number of messages, tags, and attack rate as fixed parameters for the mathematical model. Then, the framework will be able to provide the optimal dependency graph for the given inputs.
+
+% Given the parameters, the framework solves an MILP problem. MILP problems are known as NP-Hard problems, which can take a long time to solve. One might argue that MILPs are too slow to be used for rapid time-varying parameters. However, we point out that the computation can be done beforehand for different scenarios of parameters. Then the appropriate optimal assignment can be deployed as soon as the environment change is detected. With this scheme, the presented works can be implemented in real-world applications.
+
+

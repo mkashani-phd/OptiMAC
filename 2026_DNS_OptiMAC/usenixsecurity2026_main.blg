@@ -1,0 +1,50 @@
+This is BibTeX, Version 0.99d (TeX Live 2023/Debian)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: usenixsecurity2026_main.aux
+The style file: plain.bst
+Database file #1: references.bib
+Warning--to sort, need author or key in etsi_ts_133501_v17_5_0
+Warning--empty author in etsi_ts_133501_v17_5_0
+Warning--empty journal in OptiMAC
+You've used 27 entries,
+            2118 wiz_defined-function locations,
+            666 strings with 9653 characters,
+and the built_in function-call counts, 10656 in all, are:
+= -- 1100
+> -- 438
+< -- 17
++ -- 174
+- -- 145
+* -- 639
+:= -- 1609
+add.period$ -- 98
+call.type$ -- 27
+change.case$ -- 154
+chr.to.int$ -- 0
+cite$ -- 30
+duplicate$ -- 466
+empty$ -- 867
+format.name$ -- 145
+if$ -- 2414
+int.to.chr$ -- 0
+int.to.str$ -- 27
+missing$ -- 20
+newline$ -- 142
+num.names$ -- 54
+pop$ -- 214
+preamble$ -- 1
+purify$ -- 126
+quote$ -- 0
+skip$ -- 378
+stack$ -- 0
+substring$ -- 611
+swap$ -- 187
+text.length$ -- 17
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 108
+warning$ -- 3
+while$ -- 97
+width$ -- 29
+write$ -- 319
+(There were 3 warnings)

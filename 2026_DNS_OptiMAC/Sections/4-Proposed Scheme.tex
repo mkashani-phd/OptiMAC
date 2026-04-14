@@ -1,0 +1,164 @@
+% Our proposed scheme, OptiMAC, extends the Progressive MAC (ProMAC) framework
+% with an optimization layer that adapts the allocation of tags to both channel
+% conditions and application requirements. Unlike prior approaches that employ a
+% fixed tag-to-message ratio (TMR), OptiMAC allows any fractional assignment,
+% thus flexibly trading off integrity assurance and communication overhead. The
+% design is guided by four goals (G1–G4), and each part of the scheme is
+% constructed to directly address these goals.
+
+% OptiMAC maintains a running state that evolves with each new message and
+% produces tags covering multiple overlapping subsets of messages. Instead of
+% enforcing a one-tag-per-message rule, the scheme optimizes both the length of
+% tags and their distribution across messages, ensuring that every message can
+% be verified by several tags with controlled redundancy. This structure enables
+% adaptability and robustness even under severe packet loss or adversarial
+% jamming.
+
+% With respect to G1 (Security), OptiMAC inherits the cryptographic foundation
+% of ProMAC, where domain-separated pseudorandom functions (PRFs) are used to
+% generate tags. Forging a valid set of tags requires producing multiple
+% independent MACs, so the adversary’s success probability decreases
+% exponentially with the number of required forgeries. By enforcing a 256-bit
+% security budget across tags, the scheme provides strong protection against
+% tampering while splitting this budget flexibly across shorter tags.
+
+% For G2 (Efficiency), OptiMAC improves upon the rigid one-tag-per-message rule
+% by enabling arbitrary tag-to-message ratios such as $2/3$ or $3/5$. This
+% contrasts with aggregate MACs that are limited to discrete values of $1/n$.
+% By distributing the same overall security budget across fewer or shorter tags,
+% OptiMAC increases throughput while preserving verifiable integrity.
+
+% In terms of G3 (Resilience to Loss and Jamming), the scheme leverages
+% overlapping tag coverage. Each message is protected by multiple tags generated
+% at different stages of the state evolution, so even if some tags are lost due to random or periodic jamming, other tags covering the same message still
+% enable verification. This design avoids the all-or-nothing failure mode of
+% aggregate MACs and maintains performance under highly adversarial conditions.
+
+% Finally, G4 (Flexibility) is achieved through dynamic adaptation. OptiMAC can
+% be tuned to prioritize higher throughput by reducing the TMR or greater
+% robustness by increasing redundancy. Because the optimization considers
+% measurable parameters such as message length, security requirement, and
+% channel quality, the scheme can be configured in real time to match the needs
+% of diverse applications ranging from low-latency communication to
+% mission-critical secure links.
+
+% In summary, OptiMAC unifies the goals of security, efficiency, resilience, and
+% flexibility in a single framework. By discarding the traditional notion of
+% “one message, one tag” and instead treating integrity as an optimizable
+% resource, the scheme offers adaptability and performance advantages that prior
+% approaches cannot provide.The detailed nomenclature for the mixed-integer linear program (MILP) model is provided in Table \ref{tab:nomenclature}.
+Our proposed scheme, OptiMAC, extends the Progressive MAC (ProMAC) framework
+with an optimization layer that determines how tags are generated, distributed,
+and assigned to messages.
+
+\begin{table} [htbp]
+        
+	\footnotesize
+	\begin{center}
+		\caption{\small Nomenclature for the OptiMAC's optimization model} \label{tab:nomenclature}
+		\vspace{1ex} {
+			\begin{tabular}{|l|l|}
+				\hline
+				\it{Sets} & {Description}\\ \hline
+				$I$ &  Set of message indices $\{1,\ldots,m\}$ \\
+				$J$ & Set of tags indices $\{1,\ldots,n \}$  \\
+                    $K$ & Set of possible number of messages that can be  \\
+                        & assigned to a tag $\{0,\ldots, m\}$  \\
+				    % & \\
+				\hline\it{Decision Variables} & {Description}\\ \hline
+				$x_{ij}$  & Binary variables representing message assignments \\
+         				   & to tag. Equal to 1 if message $i$ is assigned to tag $j$. \\
+                              % &   \\
+                    $z_{j}^k$ & Binary variables representing the total number of\\
+                              & messages assigned to tag $j$. Equal to 1 if $k$ \\
+                              &  messages are assigned to tag $j$.\\
+                    $y_{ij}^k$ & Binary variables representing the combination of a \\
+                               & message, its tag, and the total count of messages\\
+                               & assigned to that tag. Equal to 1 if message $i$ is \\
+                               & assigned to tag $j$, and there are $k$ messages \\ & assigned to that tag.\\
+                    $U_{ij}^k$ & Expected value of tag $j$ being usable for message $i$ \\
+                    &if message $i$ is assigned to tag $j$, and there are \\
+                    & $k$ messages assigned to tag $j$.\\
+                   $A^\prime$ & Dummy variable for equally representing the expected  \\
+                    & number of usable tags across all the messages\\
+                               % & \\
+				\hline\it{Parameters} & {Description}\\ \hline
+    
+				$w^k (p,q) $ & Pre-calculated authentication probabilities with respect\\
+                                     &  to $p, q$ for a tag with k number of assigned messages\\
+				%$A^s$ & Uncertain crop yield under scenario $s$ (bu/acre)\\
+				$p$ & Success probability of each message \\
+                    $q$ & Success probability of each tag \\
+				\hline
+			\end{tabular}
+		}
+	\end{center}
+\end{table}
+
+
+
+% At its core, OptiMAC maintains a running state that evolves with each message,
+% while tags are produced to cover multiple overlapping subsets of messages.
+% Unlike traditional schemes that force a single tag per message, or aggregate
+% MACs that can only support discrete ratios such as $1/n$, OptiMAC permits any
+% fractional tag-to-message ratio. This flexibility ensures that every message is
+% covered by at least one tag and often by several tags, so that verification
+% remains possible even if some tags are lost. In practice, this allows OptiMAC
+% to meet stringent security requirements while improving throughput and
+% robustness under jamming.
+
+% To achieve this flexibility systematically, we design an optimization module that determines how tags should be assigned to messages to maximize the expected number of expected usable tags. The objective function is to maximize the expected tag usability, as shown in equation~\eqref{eq:objective_sum}, where the contribution of each tag to each message is calculated in equation~\eqref{eq:message_auth_value}. Additional constraints ensure the consistency of assignments: equations~\eqref{eq:agg_count} and~\eqref{eq:single_agg} represent the total number of messages associated with each tag, equation~\eqref{eq:assign_y} defines message-to-tag assignment variables, equation~\eqref{eq:equivalent_A} balances the distribution of usable tags across messages, and equation~\eqref{eq:tag_every_message} guarantees that each message is covered by at least one tag. The remaining constraints enforce the binary nature of the decision variables. The complete mathematical formulation is presented in the Appendix for clarity and reproducibility.
+
+% A key challenge arises because the expected usability function
+% (Equation~\eqref{E[A]}) is nonlinear. To address this, we introduce an
+% auxiliary variable $k$ representing the number of messages assigned to each
+% tag. Let \(w^k_{ij}\) denote pre-computed authentication probabilities for
+% message–tag assignments, and let \(U^k_{ij}\) represent the probability that
+% tag $t_j$ is usable for message $m_i$ given $k$ assignments. By introducing
+% binary variables \(y^k_{ij}\) to select the appropriate $w^k_{ij}$, we
+% linearize the model into a mixed-integer linear program (MILP). Although this
+% increases complexity, it allows us to leverage efficient solvers such as Gurobi
+% to obtain optimal assignments under realistic settings. The implementation is
+% developed in Python 3.9.6 and uses Gurobi version 11.0.2 as the solver. For
+% transparency, our optimization codebase is available in a GitHub repository,
+% with the link removed here to preserve anonymity in the review process.
+
+
+Maximizing the $E[A]$ ensures  goals G1 and G2. Therefore, we have modeled this problem as follows:
+\begin{align}
+\text{max \hspace{.2cm}} & \sum\limits_{i \in I}\sum\limits_{j \in J}\sum\limits_{k \in K}  U_{ij}^k \label{eq:objective_sum} \\
+% \text{min\hspace{.2cm}}  & |t_j| \\
+\text{\hspace{.3cm}} s.t.  & \nonumber \\
+% &\sum\limits_{i \in I}\sum\limits_{j \in J}\sum\limits_{k \in K}  U_{ij}^k > \tau& \label{eq:objective_sum} \\
+& w^k y_{ij}^k |t_j|=  U_{ij}^k & \forall i \in I, j \in J, k \in K \label{eq:message_auth_value}\\
+& \sum\limits_{i \in I} x_{ij} = \sum\limits_{k \in K} k z_{j}^k & \forall j \in J \label{eq:agg_count}\\
+& \sum\limits_{k \in K} z_{j}^k \leq 1 & \forall k \in K \label{eq:single_agg}\\
+& x_{ij} + z_{j}^k \geq 2 y_{ij}^k & \forall i \in I, j \in J, k \in K \label{eq:assign_y}\\
+& \sum\limits_{j \in J} \sum\limits_{k \in K} U_{ij}^k = A^\prime & \forall i \in I \label{eq:equivalent_A}\\
+& \sum\limits_{j \in J} x_{ij} \geq 1 & \forall i \in I \label{eq:tag_every_message}\\
+& A^\prime \geq 0 \\
+& x_{ij}, z_{j}^k, y_{ij}^k \in \{0,1\}  
+\end{align}
+The objective function is to maximize the expected number of usable tags for all messages \eqref{eq:objective_sum}. The expected tag usability of each message for its respective tag when in total $k$ messages are assigned to that tag is calculated in equation \eqref{eq:message_auth_value}. Equations \eqref{eq:agg_count} and \eqref{eq:single_agg} ensure the total number of messages assigned to each tag is represented accurately, while equation \eqref{eq:assign_y} handles the assignments for each message, tag, and assignment combinations. During our test runs, we noticed that the expected number of usable tags is not equally distributed. To ensure the equal distribution, equation ~\eqref{eq:equivalent_A} is incorporated. Finally, equation \eqref{eq:tag_every_message} makes sure each message is assigned to at least one tag. The remaining constraints are the binary restrictions on the decision variables.
+
+% We have designed an optimization technique, an important block of optiMAC, that is capable of achieving optimum security. By employing mathematical programming, we developed a systematic approach to ensure the scheme achieves optimal expected security for each combination of tag and message numbers under varying loss rates, addressing goal G3. In designing a MAC scheme, security requirements—such as the number of bits that must verify each message—are typically predefined and fixed. As a result, the parameters available for optimization include the number of tags, the size of the tags, and the assignment of tags to messages. By strategically assigning messages to tags to maximize $E[\textbf{A}]$, we ensure optimal security is maximized, fulfilling goal G2. Moreover, by increasing the number of tags in every step we can find the optimum goodput to satisfy the design goal G1. Therefore, we formulate the optimization problem as follows:
+
+ % why b is not in the objective 
+
+% why k is there 
+Equation \eqref{E[A]} is highly non-linear and requires linearization to be used in MILP formulation. Let \( w^k_{ij} \) be the pre-calculated authentication probability values for all possible message-to-tag assignments, where the superscript \( k \) represents the number of messages assigned to tag \( j \). 
+
+Note that since the usability vector is a binary random variable where \( U_j \in \{0,1\} \), the probabilities and expected values are equivalent and these terms can be used interchangeably for clarity. Let \( U^k_{ij} \) represent the probability that tag \( t_j \) is usable for message \( m_i \) when a total of \( k \) messages are assigned to tag \( t_j \). By maximizing the summation of \( U^k_{ij} \) over \( j, i, k \), we maximize the expected number of usable tags for all messages.
+
+In this model, \( y^k_{ij} \) will be set to one to assign the correct pre-calculated \( w^k_{ij} \) to \( U^k_{ij} \). While the introduction of the variable \( k \) linearizes the model, it increases computational complexity and runtime for larger problems. To solve this mathematical model, Gurobi version 11.0.2 is utilized as a baseline solver on default settings, and it was implemented in Python version 3.9.6. The optimization model is available in~\cite{OptiMAC}.
+
+
+
+Through this formulation, OptiMAC directly addresses the four design goals.
+For G1 and G2 (High Goodput and Security Level Requirement), the optimization ensures that more messages are verified by a sufficient number of tags meeting the security requirement. For G4 (Flexibility), the MILP framework allows the system to adjust the number of tags, their sizes, and their assignment strategy dynamically, depending on measured channel conditions and application demands. And finally our approach is systematic and provides an optimum solution for different adversary condition, achieving G3 (Systematic Adversary-Aware Optimization). 
+
+In summary, OptiMAC unifies security, efficiency, resilience, and flexibility
+in a single framework. By discarding the traditional “one message, one tag”
+rule and by leveraging optimization techniques, the scheme maximizes the
+expected number of usable tags and guarantees robust integrity verification
+under both random and adversarial losses.

@@ -1,0 +1,148 @@
+
+
+
+
+In this section, we analyze the trade-off between security, goodput, and latency achieved by various MAC schemes based on their tag sizes and tag-to-message ratios (TMR).
+The tag-bits per message (TbpM) is a metric used to measure the integrity and availability of the system. Moreover, Goodput and TMR are metrics to show both the bandwidth and energy efficiency of the system.. 
+
+\subsection{Tag-bit per Message (TbpM) vs Goodput}
+Similar to progressive MAC~\cite{ProMAC1}, adjusting the tag bits per message could be advantageous in balancing the overhead trade-off. A higher TbpM allows for shortening the tag length while satisfying the security requirements. However, in lossy channels, where the expected number of verifications is lower than in error-free channels, shortening the tag must be done carefully. For a MAC scheme to be considered secure, it must maintain a tag size of at least 64 bits, as per NIST standards~\cite{nist_64bits}. However, NIST emphasizes the actual tag length that may vary depending on the specific algorithm employed, and some applications, like IPsec, mandate a minimum of 128-bit tags without truncation to ensure robust security~\cite{nist_gcm_update}. Without loss of generality, In the rest of this paper, we assume more than 128 and 256 Tag-bits per Message (TbpM) are high security for WiFi and 5G, respectively.
+
+In our study, any scheme with TMR exceeding the threshold set by the aggregate MAC scheme (i.e., one tag per two messages) is a high TMR scheme. Low TMR schemes are expected to offer more efficient bandwidth and computational usage by lowering the number of tags transmitted, though this may impact security if not managed carefully. By comparing various approaches in terms of security (measured in TbpM), we demonstrate the potential of optiMAC schemes to balance these factors, particularly in adversarial environments.
+
+The results, visualized in Figure~\ref{fig:explaing}, illustrate that optiMAC (indicated in blue) generally outperforms state-of-the-art methods (in red) by achieving both high security and goodput. 
+\begin{wrapfigure}{l}{0.6\linewidth}
+	\centering
+	\includegraphics[width=\linewidth]{img/results/WiFi/0.1SG.png}
+	\caption{TbpM vs. Goodput for WiFi where a 256-bit tag was used (above 128 bits is considered as high security) under 0.1 attack rate.}
+	\label{fig:explaing}
+\end{wrapfigure}
+The figure is divided into quadrants with shaded regions to indicate different trade-offs. The green area represents methods that achieve best in both metrics. The blue and light pink areas highlight methods that emphasize one metric but have sacrificed the other. The red area shows methods with both metrics are low, making these methods less desirable. By comparing the positions of red and blue points, it can be observed the relative performance of different methods. Blue points often appear in the green quadrant, suggesting a favorable balance between the metrics. 
+\begin{figure*}[h]
+     \centering
+          \begin{subfigure}[b]{0.32\linewidth}
+         \centering
+         \includegraphics[width=\linewidth]{img/results/WiFi/0.1S'.png}
+         \caption{Attack rate 0.1}
+         \label{fig:0.1S WiFi}
+     \end{subfigure} \hfill
+     \begin{subfigure}[b]{0.32\linewidth}
+         \centering
+         \includegraphics[width=\linewidth]{img/results/WiFi/0.2S'.png}
+         \caption{Attack rate 0.2}
+         \label{fig:0.2S WiFi}
+     \end{subfigure}
+     \hfill
+      \begin{subfigure}[b]{0.32\linewidth}
+         \centering
+         \includegraphics[width=\linewidth]{img/results/WiFi/0.3S'.png}
+         \caption{Attack rate 0.3}
+         \label{fig:0.3S WiFi}
+     \end{subfigure}
+
+     \caption{TbpM (y-axis) vs. TMR (x-axis) of WiFi experiments with 256-bit tags (128 or higher TbpM is high security). State-of-the-art (SOTA) includes traditional, progressive, and aggregate MAC vs. the optimal by optiMAC.}
+     \label{fig:SecurityWiFi}
+\end{figure*}
+\begin{figure*}[h]
+     \centering
+          \begin{subfigure}[b]{0.32\linewidth}
+         \centering
+         \includegraphics[width=\linewidth]{img/results/WiFi/0.1G'.png}
+         \caption{Attack rate 0.1}
+         \label{fig:0.1G WiFi}
+     \end{subfigure} \hfill
+     \begin{subfigure}[b]{0.32\linewidth}
+         \centering
+         \includegraphics[width=\linewidth]{img/results/WiFi/0.2G'.png}
+         \caption{Attack rate 0.2}
+         \label{fig:0.2G WiFi}
+     \end{subfigure}
+     \hfill
+      \begin{subfigure}[b]{0.32\linewidth}
+         \centering
+         \includegraphics[width=\linewidth]{img/results/WiFi/0.3G'.png}
+         \caption{Attack rate 0.3}
+         \label{fig:0.3G WiFi}
+     \end{subfigure}
+
+     \caption{Goodput (y-axis) vs. TMR (x-axis) of WiFi experiments where more than 80\% of Traditional MAC's Goodput is considered high. State-of-the-art (SOTA) includes traditional, progressive, and aggregate MAC vs. the optimal by optiMAC.}
+     \label{fig:GoodputWiFi}
+\end{figure*}
+Each data point in the figure represents a specific method or configuration. Red points indicate state-of-the-art (SOTA) methods, while blue points represent the optiMAC model. The labels adjacent to the points (e.g., ProMAC and Agg MAC) correspond to different methods, and the accompanying values denote the tag-to-message ratio (TMR). For instance, a TMR of 0.9 implies that for every 10 messages, there are 9 tags, highlighting the balance between security and overhead. As shown in Figure~\ref{fig:explaing}, the Aggregate MAC achieves high security and the highest goodput. On the other hand, optiMAC offers enhanced security with only a slight reduction in goodput (Pareto optimal), demonstrating the trade-off between these factors. This flexibility allows our model to adapt to the specific requirements of various applications, even under adversarial scenarios.
+\begin{figure*}[h]
+     \centering
+          \begin{subfigure}[b]{0.32\linewidth}
+         \centering
+         \includegraphics[width=\linewidth]{img/results/5G/0.1S'.png}
+         \caption{Attack rate 0.1}
+         \label{fig:0.1S 5G}
+     \end{subfigure} \hfill
+     \begin{subfigure}[b]{0.32\linewidth}
+         \centering
+         \includegraphics[width=\linewidth]{img/results/5G/0.2S'.png}
+         \caption{Attack rate 0.2}
+         \label{fig:0.2S 5G}
+     \end{subfigure}
+     \hfill
+      \begin{subfigure}[b]{0.32\linewidth}
+         \centering
+         \includegraphics[width=\linewidth]{img/results/5G/0.3S'.png}
+         \caption{Attack rate 0.3}
+         \label{fig:0.3S 5G}
+     \end{subfigure}
+
+     \caption{TbpM (y-axis) vs. TMR (x-axis) of 5G experiments with 512-bit tags (256 or higher TbpM is high security). State-of-the-art (SOTA) includes traditional, progressive, and aggregate MAC vs. the optiMAC.}
+     \label{fig:Security5G}
+\end{figure*}
+
+\begin{figure*}[h]
+     \centering
+          \begin{subfigure}[b]{0.32\linewidth}
+         \centering
+         \includegraphics[width=\linewidth]{img/results/5G/0.1G'.png}
+         \caption{Attack rate 0.1}
+         \label{fig:0.1G 5G}
+     \end{subfigure} \hfill
+     \begin{subfigure}[b]{0.32\linewidth}
+         \centering
+         \includegraphics[width=\linewidth]{img/results/5G/0.2G'.png}
+         \caption{Attack rate 0.2}
+         \label{fig:0.2G 5G}
+     \end{subfigure}
+     \hfill
+      \begin{subfigure}[b]{0.32\linewidth}
+         \centering
+         \includegraphics[width=\linewidth]{img/results/5G/0.3G'.png}
+         \caption{Attack rate 0.3}
+         \label{fig:0.3G 5G}
+     \end{subfigure}
+
+     \caption{Goodput (y-axis) vs. TMR (x-axis) of 5G experiments where more than 80\% of Traditional MAC's Goodput is considered high. State-of-the-art (SOTA) includes traditional, progressive, and aggregate MAC vs. the optiMAC.}
+     \label{fig:goodput5G}
+\end{figure*}
+\subsection{Security and Goodput vs TMR}
+
+
+Figure~\ref{fig:SecurityWiFi} illustrates the performance of different MAC schemes (SOTA, OptiMAC, Agg. MAC, and various Pro. MAC versions) across distinct network environments (5G and WiFi) under varying attack rates (0.1, 0.2, and 0.3). Each subgraph plots the "Tag-bits per Message" (y-axis) against the "TMR" \( n/m \) (x-axis), providing insights into the trade-offs between security and overhead.
+
+
+OptiMAC (depicted in blue) consistently achieves a balance between high security and low TMR, as represented in the "High Security, Low TMR" (green) region on each plot, that satisfies goal G2. This solution appears at lower tag-to-message ratios (\( n/m \)), indicating that it reaches high security without requiring larger tags-to-message ratios, which is beneficial for overhead. The optiMAC maintains robust security even with relatively low tag-bits per message, showcasing its efficiency compared to other schemes.
+
+The SOTA (State-of-the-Art) solutions, shown in red, generally reach high security but at a higher tag-to-message ratio, often resulting in greater tag-bits per message and placing them in the "High Security, High TMR" (blue) region, especially under higher attack rates. This suggests that SOTA schemes, while effective at achieving security, require more overhead than the optiMAC.
+
+In Figure~\ref{fig:0.2S WiFi}, the Agg. MAC's TMR was configured to $\frac{1}{3}$, which positioned it in the lower left (green) or lower-middle regions of the plots, representing High security with low TMR. This shows that heuristic approaches also could achieve high performance. However, it does not provide adequate security in environments with high attack rates as Agg. MAC falls into the Low security, Low TMR region at 0.3 attack rate shown in Figure~\ref{fig:0.3S WiFi}. Meanwhile, the ProMAC variants (``dependency area'' of 2, 3, and 4 without tag length adjustment) generally fall into the "Low Security, High TMR" or "High Security, High TMR" regions. Although these variants offer better security than AggMAC, they incur the highest TMR.
+
+As the attack rate increases (moving from left to right across the columns: 0.1, 0.2, and 0.3), all schemes exhibit a decrease in tag-bits per message, which reflects the need for more tags to maintain security in more adversarial conditions. 
+
+The 5G and WiFi experimental results, shown in Figure~\ref{fig:Security5G}, and Figure~\ref{fig:SecurityWiFi} reveal consistent trends across both networks, with the optimal solution achieving lower TMR for similar security levels as previous works. However, the WiFi and 5G configurations are different, as shown in~\ref{tab:setting}. This is reflected as a lower tag-bit per message in WiFi than that of the 5G due to the shorter tag length used in WiFi (32 vs. 64 Bytes). Moreover, the WiFi packet payload size was 6 times smaller than that of the 5G experiment, emulating the high throughput application of 5G.
+
+Moreover, by observing the trend of the blue dots in Figure~\ref{fig:GoodputWiFi} or Figure~\ref{fig:goodput5G}, we can identify a curve that suggests an optimal range where goodput is maximized while satisfying security requirements, aligning with Goal 1. By focusing on configurations near the peak of this curve, we can achieve the best possible balance between security and goodput, allowing for the highest efficiency under the given attack conditions. This approach helps pinpoint the configurations that maximize goodput without compromising the robustness objectives.
+
+
+\subsection{Computation and Latency Overhead}
+
+
+
+In conclusion, this analysis highlights the advantage of optiMAC in under-attack scenarios, particularly in energy-sensitive applications. It underscores the adaptability of the optimal configuration across diverse network conditions.
+
+

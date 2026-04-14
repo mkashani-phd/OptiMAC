@@ -1,0 +1,13 @@
+To establish the foundation of our proposed framework, we begin by defining the essential performance metrics, including the Security Level Requirements and Goodput.
+
+% \subsection*{Message Authentication Codes (MACs)}
+% A Message Authentication Code (MAC), also referred to as tag, is a cryptographic tool that ensures the integrity and authenticity of a message. Formally, a MAC scheme is defined by \textbf{Tag Generation (Sig)}, which uses the key \( k \) and a message \( m \) to generate a MAC tag \( t \), thus \( t = \text{Sig}(k, m) \). Lastly, \textbf{verification (Vrfy)} which confirms the validity of the tag. Given a key \( k \), message \( m \), and received tag \( t \), the algorithm \( \text{Vrfy}(k, m, t) \) outputs either true (if the tag is valid) or false otherwise. MACs security level dependent exponentially on the length of the tag and additionally to the the strength of the underlying key and cryptographic algorithm.
+
+\subsection*{Security Level Requirement}\label{sec_lvl_req}
+Many applications specify a required security level $S$ (e.g., $S=256$ bits) per message. If each usable tag verification contributes $|t|$ bits of tag strength, then a message meets the security level requirement when it accumulates enough verifications so that the cumulative strength reaches $S$.
+\subsection{Goodput Metric}
+We use \emph{goodput} to quantify efficiency: the ratio of messages that are verified (received and met security level requirements) relative to the total bits transmitted (messages plus tags). 
+\begin{equation}
+    G = \dfrac{\sum\text{verified message bits}}{\sum\text{transmitted messages bits} + \sum\text{transmitted tag bits}}.
+\end{equation}
+

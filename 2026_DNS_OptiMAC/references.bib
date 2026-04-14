@@ -1,0 +1,404 @@
+@article{miniMAC,
+title = {Mini-MAC: Raising the bar for vehicular security with a lightweight message authentication protocol},
+journal = {Vehicular Communications},
+volume = {9},
+pages = {188-196},
+year = {2017},
+issn = {2214-2096},
+doi = {https://doi.org/10.1016/j.vehcom.2017.07.002},
+url = {https://www.sciencedirect.com/science/article/pii/S2214209616301619},
+author = {Jackson Schmandt and Alan T. Sherman and Nilanjan Banerjee},
+keywords = {CAN bus, Automotive security, Message authentication code, Mini-MAC, Vehicle security, Applied cryptography},
+abstract = {We propose Mini-MAC, a new message authentication protocol that works in existing automotive computer networks without delaying any message or increasing network traffic. Deployed in many vehicles, the CAN bus is a low-speed network connecting electronic control units, including those that control critical functionality such as braking and acceleration. The CAN bus is extremely vulnerable to malicious actors with bus access, including wireless access. Traditionally, Message Authentication Codes (MACs) help authenticate the sender of a message, and variants prevent message replay attacks; however, standard MACs are unsuitable for use on the CAN bus because of small payload sizes. Restrictions of the CAN bus, including the need not to delay messages or increase bus traffic, severely limit how well this network can be protected. Mini-MAC is based on a counter-seeded keyed-Hash MAC (HMAC), augmented with message history and truncated to fit available message space. It does not increase bus traffic and incurs a very small performance penalty relative to the provably secure HMAC. It is the first proposal to combine these two tenets for vehicle networks. The message history feature protects against all transient attackers, even if they know the keys. Though the CAN bus cannot be properly secured against a dedicated attacker, Mini-MAC meaningfully raises the bar of vehicular security, enhancing the safety of drivers and others.}
+}
+
+@INPROCEEDINGS{cuMAC,
+  author={Li, He and Kumar, Vireshwar and Park, Jung-Min Jerry and Yang, Yaling},
+  booktitle={2020 IEEE Conference on Communications and Network Security (CNS)}, 
+  title={Cumulative Message Authentication Codes for Resource-Constrained Networks}, 
+  year={2020},
+  volume={},
+  number={},
+  pages={1-9},
+  keywords={Authentication;Cryptography;Receivers;Message authentication;Protocols;Aggregates;Message authentication code (MAC);Internet-of-Things (IoT);Sigfox;Controller area network (CAN)},
+  doi={10.1109/CNS48642.2020.9162217}}
+
+
+@article{OptiMAC,
+author = "anonym anonymus",
+title = "{OptiMAC}",
+year = "2025",
+month = "8",
+url = "https://figshare.com/articles/software/OptiMAC/29959754",
+doi = "10.6084/m9.figshare.29959754.v1"
+} 
+
+@inproceedings{compundMAC_original,
+  title={How to Sign Digital Streams},
+  booktitle={Advances in Cryptology - CRYPTO '97, 17th Annual International Cryptology Conference, Santa Barbara, California, USA, August 17-21, 1997, Proceedings},
+  series={Lecture Notes in Computer Science},
+  publisher={Springer},
+  volume={1294},
+  pages={180-197},
+  doi={10.1007/BFb0052235},
+  author={Rosario Gennaro and Pankaj Rohatgi},
+  year=1997
+}
+
+
+@InProceedings{XOR_MAC_original,
+author="Bellare, Mihir
+and Gu{\'e}rin, Roch
+and Rogaway, Phillip",
+editor="Coppersmith, Don",
+title="XOR MACs: New Methods for Message Authentication Using Finite Pseudorandom Functions",
+booktitle="Advances in Cryptology --- CRYPT0' 95",
+year="1995",
+publisher="Springer Berlin Heidelberg",
+address="Berlin, Heidelberg",
+pages="15--28",
+abstract="We describe a new approach for authenticating a message using a finite pseudorandom function (PRF). Our ``XOR MACs'' have several nice features, including parallelizability, incrementality, and provable security. The finite PRF can be ``instantiated'' via DES (yielding an alternative to the CBC MAC), via the compression function of MD5 (yielding an alternative to various ``keyed MD5'' constructions), or in a variety of other ways. The proven security is quantitative, expressing the adversary's inability to forge in terms of her (presumed) inability to break the underlying finite PRF. This is backed by attacks showing the analysis is tight. Our proofs exploit linear algebraic techniques.",
+isbn="978-3-540-44750-4"
+}
+
+@InProceedings{History_free_Aggregate_Message_Authentication_Codes,
+author="Eikemeier, Oliver
+and Fischlin, Marc
+and G{\"o}tzmann, Jens-Fabian
+and Lehmann, Anja
+and Schr{\"o}der, Dominique
+and Schr{\"o}der, Peter
+and Wagner, Daniel",
+editor="Garay, Juan A.
+and De Prisco, Roberto",
+title="History-Free Aggregate Message Authentication Codes",
+booktitle="Security and Cryptography for Networks",
+year="2010",
+publisher="Springer Berlin Heidelberg",
+address="Berlin, Heidelberg",
+pages="309--328",
+abstract="Aggregate message authentication codes, as introduced by Katz and Lindell (CT-RSA 2008), combine several MACs into a single value, which has roughly the same size as an ordinary MAC. These schemes reduce the communication overhead significantly and are therefore a promising approach to achieve authenticated communication in mobile ad-hoc networks, where communication is prohibitively expensive. Here we revisit the unforgeability notion for aggregate MACs and discuss that the definition does not prevent ``mix-and-match'' attacks in which the adversary turns several aggregates into a ``fresh'' combination, i.e., into a valid aggregate on a sequence of messages which the attacker has not requested before. In particular, we show concrete attacks on the previous scheme.",
+isbn="978-3-642-15317-4"
+}
+
+
+
+
+
+@ARTICLE{Dolev-Yao,
+  author={Dolev, D. and Yao, A.},
+  journal={IEEE Transactions on Information Theory}, 
+  title={On the security of public key protocols}, 
+  year={1983},
+  volume={29},
+  number={2},
+  pages={198-208},
+  keywords={},
+  doi={10.1109/TIT.1983.1056650}}
+
+@misc{badgeOfShame,
+  author       = {Dan Petro and David Vargas},
+  title        = {Badge of Shame: Breaking into Secure Facilities with OSDP},
+  howpublished = {\url{https://www.blackhat.com/us-23/briefings/schedule/#badge-of-shame-breaking-into-secure-facilities-with-osdp-32762}},
+  month        = {August},
+  year         = {2023},
+  note         = {Presented at Black Hat USA 2023}
+}
+
+@misc{nist_64bits,
+  title        = {Public Comments on SP 800-38B},
+  author       = {{National Institute of Standards and Technology}},
+  year         = 2024,
+  month        = oct,
+  url          = {https://csrc.nist.gov/csrc/media/Projects/crypto-publication-review-project/documents/initial-comments/sp800-38b-initial-public-comments-2024.pdf},
+  note         = {Accessed: 2024-11-14}
+}
+@misc{nist_gcm_update,
+  title        = {The Galois/Counter Mode of Operation (GCM) Update},
+  author       = {{National Institute of Standards and Technology}},
+  year         = 2007,
+  month        = may,
+  url          = {https://csrc.nist.gov/csrc/media/projects/block-cipher-techniques/documents/bcm/comments/cwc-gcm/gcm-update.pdf},
+  note         = {Accessed: 2024-11-14}
+}
+
+@INPROCEEDINGS{compoundMAC,
+  author={Nilsson, Dennis K. and Larson, Ulf E. and Jonsson, Erland},
+  booktitle={2008 IEEE 68th Vehicular Technology Conference}, 
+  title={Efficient In-Vehicle Delayed Data Authentication Based on Compound Message Authentication Codes}, 
+  year={2008},
+  volume={},
+  number={},
+  pages={1-5},
+  keywords={Authentication;Security;Vehicles;Compounds;Protocols;Cryptography;Real time systems},
+  doi={10.1109/VETECF.2008.259}}
+
+@inproceedings{when_And_How_Aggregate_In_Lossy_Channel,
+  title={When and How to Aggregate Message Authentication Codes on Lossy Channels?},
+  author={Wagner, Eric and Serror, Martin and Wehrle, Klaus and Henze, Martin},
+  booktitle={International Conference on Applied Cryptography and Network Security},
+  pages={241--264},
+  year={2024},
+  organization={Springer}
+}
+@inproceedings{aggregateMAC,
+  title={Aggregate message authentication codes},
+  author={Katz, Jonathan and Lindell, Andrew Y},
+  booktitle={Cryptographers’ Track at the RSA Conference},
+  pages={155--169},
+  year={2008},
+  organization={Springer}
+}
+@inproceedings{ProMAC1,
+author = {Armknecht, Frederik and Walther, Paul and Tsudik, Gene and Beck, Martin and Strufe, Thorsten},
+title = {ProMACs: Progressive and Resynchronizing MACs for Continuous Efficient Authentication of Message Streams},
+year = {2020},
+isbn = {9781450370899},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3372297.3423349},
+doi = {10.1145/3372297.3423349},
+abstract = {Efficiently integrity verification of received data requires Message Authentication Code (MAC) tags. However, while security calls for rather long tags, in many scenarios this contradicts other requirements. Examples are strict delay requirements (e.g., robot or drone control) or resource-scarce settings (e.g., LoRaWAN networks with limited battery capacity).Prior techniques suggested truncation of MAC tags, thus trading off linear performance gain for exponential security loss. To achieve security of full-length MACs with short(er) tags, we introduce Progressive MACs (ProMACs) -- a scheme that uses internal state to gradually increase security upon reception of subsequent messages. We provide a formal framework and propose a provably secure, generic construction called Whips. We evaluate applicability of ProMACs in several realistic scenarios and demonstrate example settings where ProMACs can be used as a drop-in replacement for traditional MACs.},
+booktitle = {Proceedings of the 2020 ACM SIGSAC Conference on Computer and Communications Security},
+pages = {211–223},
+numpages = {13},
+keywords = {drone control, message authentication codes, progressing security, robot control, sensor networks, stream authentication},
+location = {Virtual Event, USA},
+series = {CCS '20}
+}
+@inproceedings{proMac2,
+author = {Wagner, Eric and Bauer, Jan and Henze, Martin},
+title = {Take a Bite of the Reality Sandwich: Revisiting the Security of Progressive Message Authentication Codes},
+year = {2022},
+isbn = {9781450392167},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3507657.3528539},
+doi = {10.1145/3507657.3528539},
+abstract = {Message authentication guarantees the integrity of messages exchanged over untrusted channels. However, to achieve this goal, message authentication considerably expands packet sizes, which is especially problematic in constrained wireless environments. To address this issue, progressive message authentication provides initially reduced integrity protection that is often sufficient to process messages upon reception. This reduced security is then successively improved with subsequent messages to uphold the strong guarantees of traditional integrity protection. However, contrary to previous claims, we show in this paper that existing progressive message authentication schemes are highly susceptible to packet loss induced by poor channel conditions or jamming attacks. Thus, we consider it imperative to rethink how authentication tags depend on the successful reception of surrounding packets. To this end, we propose R2-D2, which uses randomized dependencies with parameterized security guarantees to increase the resilience of progressive authentication against packet loss. To deploy our approach to resource-constrained devices, we introduce SP-MAC, which implements R2-D2 using efficient XOR operations. Our evaluation shows that SP-MAC is resilient to sophisticated network-level attacks and operates as resources-conscious and fast as existing, yet insecure, progressive message authentication schemes.},
+booktitle = {Proceedings of the 15th ACM Conference on Security and Privacy in Wireless and Mobile Networks},
+pages = {207–221},
+numpages = {15},
+keywords = {promacs, progressive authentication, cyber-physical systems},
+location = {San Antonio, TX, USA},
+series = {WiSec '22}
+}
+
+@ARTICLE{group_testing,
+  author={Hirose, Shoichi and Shikata, Junji},
+  journal={IEEE Access}, 
+  title={Aggregate Message Authentication Code Capable of Non-Adaptive Group-Testing}, 
+  year={2020},
+  volume={8},
+  number={},
+  pages={216116-216126},
+  keywords={Aggregates;Testing;Syntactics;Resistance;Message authentication;Cryptographic hash function;Servers;Group testing;message authentication;provable security},
+  doi={10.1109/ACCESS.2020.3041638}}
+
+@software{MAC_Aggregation_Optimization_2024,
+author = {A},
+month = jun,
+title = {{MAC Aggregation Optimization}},
+url = {https://github.com/},
+version = {0.0.1},
+year = {2024}
+}
+
+@inproceedings{boneh2003aggregate,
+  title={Aggregate and verifiably encrypted signatures from bilinear maps},
+  author={Boneh, Dan and Gentry, Craig and Lynn, Ben and Shacham, Hovav},
+  booktitle={Advances in Cryptology—EUROCRYPT 2003: International Conference on the Theory and Applications of Cryptographic Techniques, Warsaw, Poland, May 4--8, 2003 Proceedings 22},
+  pages={416--432},
+  year={2003},
+  organization={Springer}
+}
+
+@ARTICLE{cumulativeMAC,
+  author={Li, He and Kumar, Vireshwar and Park, Jung-Min and Yang, Yaling},
+  journal={IEEE Internet of Things Journal}, 
+  title={Cumulative Message Authentication Codes for Resource-Constrained IoT Networks}, 
+  year={2021},
+  volume={8},
+  number={15},
+  pages={11847-11859},
+  keywords={Cryptography;Authentication;Internet of Things;Receivers;Message authentication;Security;Delays;Controller area network (CAN);Internet of Things (IoT);message authentication code (MAC)},
+  doi={10.1109/JIOT.2021.3074054}}
+
+@inproceedings{BP-MAC-Fast-Authentication-for-Short-Messages,
+author = {Wagner, Eric and Serror, Martin and Wehrle, Klaus and Henze, Martin},
+title = {BP-MAC: Fast Authentication for Short Messages},
+year = {2022},
+isbn = {9781450392167},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3507657.3528554},
+doi = {10.1145/3507657.3528554},
+abstract = {Resource-constrained devices increasingly rely on wireless communication for the reliable and low-latency transmission of short messages. However, especially the implementation of adequate integrity protection of time-critical messages places a significant burden on these devices. We address this issue by proposing BP-MAC, a fast and memory-efficient approach for computing message authentication codes based on the well-established Carter-Wegman construction. Our key idea is to offload resource-intensive computations to idle phases and thus save valuable time in latency-critical phases, i.e., when new data awaits processing. Therefore, BP-MAC leverages a universal hash function designed for the bitwise preprocessing of integrity protection to later only require a few XOR operations during the latency-critical phase. Our evaluation on embedded hardware shows that BP-MAC outperforms the state-of-the-art in terms of latency and memory overhead, notably for small messages, as required to adequately protect resource-constrained devices with stringent security and latency requirements.},
+booktitle = {Proceedings of the 15th ACM Conference on Security and Privacy in Wireless and Mobile Networks},
+pages = {201–206},
+numpages = {6},
+keywords = {universal hashing, message authentication, cyber-physical systems},
+location = {San Antonio, TX, USA},
+series = {WiSec '22}
+}
+
+
+
+
+@inproceedings{DoS_AggregateMAC,
+  title={MAC aggregation resilient to DoS attacks},
+  author={Kolesnikov, Vladimir and Lee, Wonsuck and Hong, Junhee},
+  booktitle={2011 IEEE International Conference on Smart Grid Communications (SmartGridComm)},
+  pages={226--231},
+  year={2011},
+  organization={IEEE}
+}
+
+@misc{sequential_aggregate,
+      author = {Anna Lysyanskaya and Silvio Micali and Leonid Reyzin and Hovav Shacham},
+      title = {Sequential Aggregate Signatures from Trapdoor Permutations},
+      howpublished = {Cryptology ePrint Archive, Paper 2003/091},
+      year = {2003},
+      note = {\url{https://eprint.iacr.org/2003/091}},
+      url = {https://eprint.iacr.org/2003/091}
+}
+
+@inproceedings{sequential_aggregate2,
+  title={Sequential aggregate signatures and multisignatures without random oracles},
+  author={Lu, Steve and Ostrovsky, Rafail and Sahai, Amit and Shacham, Hovav and Waters, Brent},
+  booktitle={Advances in Cryptology-EUROCRYPT 2006: 24th Annual International Conference on the Theory and Applications of Cryptographic Techniques, St. Petersburg, Russia, May 28-June 1, 2006. Proceedings 25},
+  pages={465--485},
+  year={2006},
+  organization={Springer}
+}
+
+@inproceedings{application_sequential_aggregation,
+  title={Forward-secure sequential aggregate authentication},
+  author={Ma, Di and Tsudik, Gene},
+  booktitle={2007 IEEE Symposium on Security and Privacy (SP'07)},
+  pages={86--91},
+  year={2007},
+  organization={IEEE}
+}
+
+@inproceedings{XOR_MAC,
+  title={MAC aggregation resilient to DoS attacks},
+  author={Kolesnikov, Vladimir and Lee, Wonsuck and Hong, Junhee},
+  booktitle={2011 IEEE International Conference on Smart Grid Communications (SmartGridComm)},
+  pages={226--231},
+  year={2011},
+  organization={IEEE}
+}
+@article{wang2006csma,
+  title={CSMA/CCA: a modified CSMA/CA protocol mitigating the fairness problem for IEEE 802.11 DCF},
+  author={Wang, Xin and Giannakis, Georgios B},
+  journal={EURASIP Journal on Wireless Communications and Networking},
+  volume={2006},
+  pages={1--12},
+  year={2006},
+  publisher={Springer}
+}
+
+ 
+@article{jamming_Servey,
+  	title={Jamming attacks and anti-jamming strategies in wireless networks: A comprehensive survey},
+  	author={Pirayesh, Hossein and Zeng, Huacheng},
+  	journal={IEEE communications surveys \& tutorials},
+  	volume={24},
+  	number={2},
+  	pages={767--809},
+  	year={2022},
+  	publisher={IEEE}
+  }
+
+
+@techreport{etsi_ts_133501_v17_5_0,
+  title        = {{ETSI TS 133 501 V17.5.0 (2022-05) - 5G; Security architecture and procedures for 5G System (3GPP TS 33.501 version 17.5.0 Release 17)}},
+  institution  = {ETSI},
+  year         = {2022},
+  url          = {https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/17.05.00_60/ts_133501v170500p.pdf},
+  note         = {Accessed: 2024-05-02}
+}
+
+@INPROCEEDINGS{5G_application_military,
+  author={Bastos, Luis and Capela, Germano and Koprulu, Alper and Elzinga, Gerard},
+  booktitle={2021 International Conference on Military Communication and Information Systems (ICMCIS)}, 
+  title={Potential of 5G technologies for military application}, 
+  year={2021},
+  volume={},
+  number={},
+  pages={1-8},
+  keywords={Military communication;5G mobile communication;Communications technology;ITU;Stakeholders;Standards;Research and development;5G;IMT-2020;Transmission Systems;Deployable CIS;Expeditionary Operations;Tactical Communications;Maritime communications},
+  doi={10.1109/ICMCIS52405.2021.9486402}}
+
+@inproceedings{stateful,
+  title={From stateless to stateful: Generic authentication and authenticated encryption constructions with application to TLS},
+  author={Boyd, Colin and Hale, Britta and Mj{\o}lsnes, Stig Frode and Stebila, Douglas},
+  booktitle={Cryptographers’ Track at the RSA Conference},
+  pages={55--71},
+  year={2016},
+  organization={Springer}
+}
+
+@ARTICLE{CAN_No_MAC,
+  author={Jo, Hyo Jin and Kim, Jin Hyun and Choi, Hyon-Young and Choi, Wonsuk and Lee, Dong Hoon and Lee, Insup},
+  journal={IEEE Transactions on Vehicular Technology}, 
+  title={MAuth-CAN: Masquerade-Attack-Proof Authentication for In-Vehicle Networks}, 
+  year={2020},
+  volume={69},
+  number={2},
+  pages={2204-2218},
+  keywords={Protocols;Authentication;Message authentication;Telematics;Standards;Hardware;Intrusion detection;Authentication;Controller Area Network;Masquerade attack;Dual CAN-controller},
+  doi={10.1109/TVT.2019.2961765}}
+
+@ARTICLE{GNSS_MAC_Challenges,
+  author={Fernández-Hernández, Ignacio and Ashur, Tomer and Rijmen, Vincent},
+  journal={IEEE Transactions on Aerospace and Electronic Systems}, 
+  title={Analysis and Recommendations for MAC and Key Lengths in Delayed Disclosure GNSS Authentication Protocols}, 
+  year={2021},
+  volume={57},
+  number={3},
+  pages={1827-1839},
+  keywords={Authentication;Protocols;Global navigation satellite system;Cryptography;Satellite broadcasting;Forgery;Media Access Protocol;Authentication;cryptography;Global Navigation Satellite System (GNSS);spoofing;timed-efficient stream loss-tolerant authentication (TESLA)},
+  doi={10.1109/TAES.2021.3053129}}
+
+@misc{oai,
+  author       = {oai},
+  title        = {OpenAirInterface - 5G Software Alliance for Democratising Wireless Innovation},
+  year         = 2024,
+  howpublished={\url{https://github.com/OPENAIRINTERFACE/openairinterface5g}},
+  note         = {Accessed: 2024-11-10}
+}
+
+@misc{open5gs,
+  author       = {open5gs},
+  title        = {Open5GS - A free and open-source 5G core network implementation},
+  year         = 2024,
+  howpublished={\url{https://github.com/open5gs/open5gs}},
+  note         = {Accessed: 2024-11-10}
+}
+
+@INPROCEEDINGS{drone_gps_spoofing,
+  author={Hartmann, Kim and Steup, Christoph},
+  booktitle={2013 5th International Conference on Cyber Conflict (CYCON 2013)}, 
+  title={The vulnerability of UAVs to cyber attacks - An approach to the risk assessment}, 
+  year={2013},
+  volume={},
+  number={},
+  pages={1-23},
+  keywords={Risk management;Military aircraft;Weapons;Aerospace electronics;Reliability;National security;UAV;Risk assessment;Cyber attack;Security analysis},
+  doi={}}
+
+@inproceedings {5G_criticality,
+author = {Jiarong Xing and Sophia Yoo and Xenofon Foukas and Daehyeok Kim and Michael K. Reiter},
+title = {On the Criticality of Integrity Protection in 5G Fronthaul Networks},
+booktitle = {33rd USENIX Security Symposium (USENIX Security 24)},
+year = {2024},
+isbn = {978-1-939133-44-1},
+address = {Philadelphia, PA},
+pages = {4463--4479},
+url = {https://www.usenix.org/conference/usenixsecurity24/presentation/xing-jiarong},
+publisher = {USENIX Association},
+month = aug
+}
+

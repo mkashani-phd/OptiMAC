@@ -1,0 +1,182 @@
+\begin{thebibliography}{10}
+
+\bibitem{etsi_ts_133501_v17_5_0}
+{ETSI TS 133 501 V17.5.0 (2022-05) - 5G; Security architecture and procedures
+  for 5G System (3GPP TS 33.501 version 17.5.0 Release 17)}.
+\newblock Technical report, ETSI, 2022.
+\newblock Accessed: 2024-05-02.
+
+\bibitem{OptiMAC}
+anonym anonymus.
+\newblock {OptiMAC}.
+\newblock 8 2025.
+
+\bibitem{ProMAC1}
+Frederik Armknecht, Paul Walther, Gene Tsudik, Martin Beck, and Thorsten
+  Strufe.
+\newblock Promacs: Progressive and resynchronizing macs for continuous
+  efficient authentication of message streams.
+\newblock In {\em Proceedings of the 2020 ACM SIGSAC Conference on Computer and
+  Communications Security}, CCS '20, page 211–223, New York, NY, USA, 2020.
+  Association for Computing Machinery.
+
+\bibitem{XOR_MAC_original}
+Mihir Bellare, Roch Gu{\'e}rin, and Phillip Rogaway.
+\newblock Xor macs: New methods for message authentication using finite
+  pseudorandom functions.
+\newblock In Don Coppersmith, editor, {\em Advances in Cryptology --- CRYPT0'
+  95}, pages 15--28, Berlin, Heidelberg, 1995. Springer Berlin Heidelberg.
+
+\bibitem{boneh2003aggregate}
+Dan Boneh, Craig Gentry, Ben Lynn, and Hovav Shacham.
+\newblock Aggregate and verifiably encrypted signatures from bilinear maps.
+\newblock In {\em Advances in Cryptology—EUROCRYPT 2003: International
+  Conference on the Theory and Applications of Cryptographic Techniques,
+  Warsaw, Poland, May 4--8, 2003 Proceedings 22}, pages 416--432. Springer,
+  2003.
+
+\bibitem{stateful}
+Colin Boyd, Britta Hale, Stig~Frode Mj{\o}lsnes, and Douglas Stebila.
+\newblock From stateless to stateful: Generic authentication and authenticated
+  encryption constructions with application to tls.
+\newblock In {\em Cryptographers’ Track at the RSA Conference}, pages 55--71.
+  Springer, 2016.
+
+\bibitem{Dolev-Yao}
+D.~Dolev and A.~Yao.
+\newblock On the security of public key protocols.
+\newblock {\em IEEE Transactions on Information Theory}, 29(2):198--208, 1983.
+
+\bibitem{compundMAC_original}
+Rosario Gennaro and Pankaj Rohatgi.
+\newblock How to sign digital streams.
+\newblock In {\em Advances in Cryptology - CRYPTO '97, 17th Annual
+  International Cryptology Conference, Santa Barbara, California, USA, August
+  17-21, 1997, Proceedings}, volume 1294 of {\em Lecture Notes in Computer
+  Science}, pages 180--197. Springer, 1997.
+
+\bibitem{drone_gps_spoofing}
+Kim Hartmann and Christoph Steup.
+\newblock The vulnerability of uavs to cyber attacks - an approach to the risk
+  assessment.
+\newblock In {\em 2013 5th International Conference on Cyber Conflict (CYCON
+  2013)}, pages 1--23, 2013.
+
+\bibitem{aggregateMAC}
+Jonathan Katz and Andrew~Y Lindell.
+\newblock Aggregate message authentication codes.
+\newblock In {\em Cryptographers’ Track at the RSA Conference}, pages
+  155--169. Springer, 2008.
+
+\bibitem{DoS_AggregateMAC}
+Vladimir Kolesnikov, Wonsuck Lee, and Junhee Hong.
+\newblock Mac aggregation resilient to dos attacks.
+\newblock In {\em 2011 IEEE International Conference on Smart Grid
+  Communications (SmartGridComm)}, pages 226--231. IEEE, 2011.
+
+\bibitem{XOR_MAC}
+Vladimir Kolesnikov, Wonsuck Lee, and Junhee Hong.
+\newblock Mac aggregation resilient to dos attacks.
+\newblock In {\em 2011 IEEE International Conference on Smart Grid
+  Communications (SmartGridComm)}, pages 226--231. IEEE, 2011.
+
+\bibitem{cuMAC}
+He~Li, Vireshwar Kumar, Jung-Min~Jerry Park, and Yaling Yang.
+\newblock Cumulative message authentication codes for resource-constrained
+  networks.
+\newblock In {\em 2020 IEEE Conference on Communications and Network Security
+  (CNS)}, pages 1--9, 2020.
+
+\bibitem{sequential_aggregate2}
+Steve Lu, Rafail Ostrovsky, Amit Sahai, Hovav Shacham, and Brent Waters.
+\newblock Sequential aggregate signatures and multisignatures without random
+  oracles.
+\newblock In {\em Advances in Cryptology-EUROCRYPT 2006: 24th Annual
+  International Conference on the Theory and Applications of Cryptographic
+  Techniques, St. Petersburg, Russia, May 28-June 1, 2006. Proceedings 25},
+  pages 465--485. Springer, 2006.
+
+\bibitem{sequential_aggregate}
+Anna Lysyanskaya, Silvio Micali, Leonid Reyzin, and Hovav Shacham.
+\newblock Sequential aggregate signatures from trapdoor permutations.
+\newblock Cryptology ePrint Archive, Paper 2003/091, 2003.
+\newblock \url{https://eprint.iacr.org/2003/091}.
+
+\bibitem{application_sequential_aggregation}
+Di~Ma and Gene Tsudik.
+\newblock Forward-secure sequential aggregate authentication.
+\newblock In {\em 2007 IEEE Symposium on Security and Privacy (SP'07)}, pages
+  86--91. IEEE, 2007.
+
+\bibitem{nist_gcm_update}
+{National Institute of Standards and Technology}.
+\newblock The galois/counter mode of operation (gcm) update, May 2007.
+\newblock Accessed: 2024-11-14.
+
+\bibitem{nist_64bits}
+{National Institute of Standards and Technology}.
+\newblock Public comments on sp 800-38b, October 2024.
+\newblock Accessed: 2024-11-14.
+
+\bibitem{compoundMAC}
+Dennis~K. Nilsson, Ulf~E. Larson, and Erland Jonsson.
+\newblock Efficient in-vehicle delayed data authentication based on compound
+  message authentication codes.
+\newblock In {\em 2008 IEEE 68th Vehicular Technology Conference}, pages 1--5,
+  2008.
+
+\bibitem{oai}
+oai.
+\newblock Openairinterface - 5g software alliance for democratising wireless
+  innovation.
+\newblock \url{https://github.com/OPENAIRINTERFACE/openairinterface5g}, 2024.
+\newblock Accessed: 2024-11-10.
+
+\bibitem{open5gs}
+open5gs.
+\newblock Open5gs - a free and open-source 5g core network implementation.
+\newblock \url{https://github.com/open5gs/open5gs}, 2024.
+\newblock Accessed: 2024-11-10.
+
+\bibitem{badgeOfShame}
+Dan Petro and David Vargas.
+\newblock Badge of shame: Breaking into secure facilities with osdp.
+\newblock
+  \url{https://www.blackhat.com/us-23/briefings/schedule/#badge-of-shame-breaking-into-secure-facilities-with-osdp-32762},
+  August 2023.
+\newblock Presented at Black Hat USA 2023.
+
+\bibitem{jamming_Servey}
+Hossein Pirayesh and Huacheng Zeng.
+\newblock Jamming attacks and anti-jamming strategies in wireless networks: A
+  comprehensive survey.
+\newblock {\em IEEE communications surveys \& tutorials}, 24(2):767--809, 2022.
+
+\bibitem{miniMAC}
+Jackson Schmandt, Alan~T. Sherman, and Nilanjan Banerjee.
+\newblock Mini-mac: Raising the bar for vehicular security with a lightweight
+  message authentication protocol.
+\newblock {\em Vehicular Communications}, 9:188--196, 2017.
+
+\bibitem{proMac2}
+Eric Wagner, Jan Bauer, and Martin Henze.
+\newblock Take a bite of the reality sandwich: Revisiting the security of
+  progressive message authentication codes.
+\newblock In {\em Proceedings of the 15th ACM Conference on Security and
+  Privacy in Wireless and Mobile Networks}, WiSec '22, page 207–221, New
+  York, NY, USA, 2022. Association for Computing Machinery.
+
+\bibitem{when_And_How_Aggregate_In_Lossy_Channel}
+Eric Wagner, Martin Serror, Klaus Wehrle, and Martin Henze.
+\newblock When and how to aggregate message authentication codes on lossy
+  channels?
+\newblock In {\em International Conference on Applied Cryptography and Network
+  Security}, pages 241--264. Springer, 2024.
+
+\bibitem{5G_criticality}
+Jiarong Xing, Sophia Yoo, Xenofon Foukas, Daehyeok Kim, and Michael~K. Reiter.
+\newblock On the criticality of integrity protection in 5g fronthaul networks.
+\newblock In {\em 33rd USENIX Security Symposium (USENIX Security 24)}, pages
+  4463--4479, Philadelphia, PA, August 2024. USENIX Association.
+
+\end{thebibliography}

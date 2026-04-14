@@ -1,0 +1,29 @@
+% Summarization of the research findings.
+% Reflection on the impact and importance of the work in advancing IoT security.
+
+
+% In this paper, we have introduced a comprehensive framework for analyzing and optimizing tag-to-message assignments in MAC techniques, addressing key challenges in secure communication systems, especially in lossy channel environments. By utilizing dependency graphs and matrices, we provided a systematic method for representing and analyzing the relationships between messages and tags. Our approach encompasses previous works as special cases, offering a more robust and flexible tool for studying MAC schemes.
+
+% We defined and calculated critical metrics such as the authentication vector, latency vector, strength number, and security rate, providing a quantitative basis for assessing the robustness and efficiency of MAC schemes. Our framework leverages linear programming to optimize the expected number of authentication for various channel conditions, ensuring high security and reliability even in lossy environments.
+
+% The results from our optimization demonstrate promising improvements in verification rates, and security. These improvements highlight the practical applicability of our theoretical advancements, providing a more secure and reliable solution for message authentication in lossy channels.
+
+% Moreover, we discussed the potential for further enhancement of our framework through including the other metrics in the objective function. A different approach is to integrate of reinforcement learning. This adaptive approach could dynamically optimize the MAC schemes in real-time, providing even greater resilience and efficiency in variable network conditions.
+
+% In conclusion, our research significantly advances the understanding and optimization of message authentication codes. The methodologies and metrics developed in this study lay a solid foundation for future research and practical applications, contributing to the development of more robust and efficient secure communication systems. We believe that our work will inspire further innovations in this critical area of network security.
+
+
+This work presented \emph{OptiMAC}, a comprehensive framework for optimizing integrity verification in lossy and adversarial communication channels. OptiMAC addresses the long-standing trade-off between security and efficiency in MAC schemes by introducing a dependency-graph representation and a mixed-integer linear programming formulation for tag-to-message assignment. Through this structured optimization, OptiMAC systematically reduces bandwidth
+and computational overhead while enhancing resilience against jamming.
+
+In contrast to traditional and heuristic-based approaches, OptiMAC moves beyond fixed or ad hoc configurations. While ProMAC established a generalized framework, it lacked a systematic method for determining critical parameters such as tag generation, update rules, and assignment strategies. OptiMAC fills this gap by mapping assignments onto a dependency graph and optimizing them mathematically, ensuring that each configuration is tailored to the demands of its environment.
+
+Our evaluation of WiFi and 5G scenarios demonstrates that OptiMAC achieves higher effective security while operating at lower tag-to-message ratios than prior schemes. These results highlight the practicality of the framework for energy-sensitive and
+mission-critical applications, where efficiency and robustness must coexist.
+
+% Looking ahead, this foundation enables further research into adaptive
+% techniques that jointly optimize latency, efficiency, and security. A promising
+% direction is the development of real-time models that adjust tag-to-message
+% configurations dynamically in response to changing channel conditions. Such
+% extensions would push OptiMAC toward delivering even stronger guarantees for
+% the evolving demands of secure wireless communication.

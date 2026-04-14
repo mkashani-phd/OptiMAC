@@ -1,0 +1,158 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+
+\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{amssymb,amsfonts} 
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{verbatim}
+\usepackage{caption}
+\usepackage{url}
+\usepackage{subcaption}
+\usepackage{subfig}
+
+
+\usepackage{wrapfig,lipsum,booktabs}
+% \usepackage[inkscapeformat=png]{svg}
+\usepackage{svg}
+% \usepackage{svg}
+\usepackage{tikz}
+\usepackage{makecell}
+
+\usepackage{colortbl}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{float}
+\usepackage[table]{xcolor}
+\usepackage{pgf}
+
+\usepackage{adjustbox}
+\usepackage{boldline}
+\usepackage{caption}
+\usepackage{listings}
+\usepackage{eqnarray}
+\usepackage{xurl} 
+
+
+
+
+%-------------------------------------------------------------------------------
+%\hyphenation{OptiMAC, vulnerability}
+
+\begin{document}
+%-------------------------------------------------------------------------------
+
+%don't want date printed
+\date{}
+
+% make title bold and 14 pt font (Latex default is non-bold, 16 pt)
+\title{\Large \bf OptiMAC: Adaptive Security Optimization for \\Message Authentication Code in Adversarial Environment}
+
+%for single author (just remove % characters)
+% \author{
+% {\rm SeyedMohammad Kashani}\\
+% Iowa State University
+% \and
+% {\rm Erfan Khademnia}\\
+% Iowa State University
+% \and
+% {\rm G\"{o}rkem Emirh\"{u}seyino\u{g}lu}\\
+% Iowa State University
+% \and
+% {\rm Yilu Dong}\\
+% Pennsylvania State University
+% \and
+% {\rm Tianwei Wu}\\
+% Pennsylvania State University
+% \and
+% {\rm Farid Nait-Abdesselam}\\
+% Universit\'e Paris Cit\'e
+% \and
+% {\rm Ashfaq Khokhar}\\
+% Iowa State University
+% \and
+% {\rm Sang W. Kim}\\
+% Iowa State University
+% \and
+% {\rm Syed Hussain Rafiul}\\
+% Pennsylvania State University
+% } % end author
+
+ \author{\IEEEauthorblockN{SeyedMohammad Kashani\IEEEauthorrefmark{1},
+		 Erfan Khademnia\IEEEauthorrefmark{2},
+		 G\"{o}rkem Emirh\"{u}seyino\u{g}lu\IEEEauthorrefmark{2}, 
+		 Yilu Dong\IEEEauthorrefmark{3},
+		 Tianwei Wu\IEEEauthorrefmark{3},\\
+		 Sang Wu Kim\IEEEauthorrefmark{1},
+		 Ashfaq Khokhar\IEEEauthorrefmark{1},
+		 Farid Nait-Abdesselam\IEEEauthorrefmark{4},
+		 and Syed Hussain Rafiul\IEEEauthorrefmark{3}, 
+		 }
+	 \IEEEauthorblockA{\IEEEauthorrefmark{1}Department of Electrical and Computer Engineering,
+		 Iowa State University}
+	 \IEEEauthorblockA{\IEEEauthorrefmark{2} Industrial and Manufacturing Systems Engineering, Iowa State University\\
+		 \IEEEauthorblockA{\IEEEauthorrefmark{3}School of Electrical Engineering and Computer Science, Pennsylvania State University}
+		 \IEEEauthorblockA{\IEEEauthorrefmark{4}Laboratory of Informatics at Paris Descartes, Université Paris Cité}
+		 \IEEEauthorrefmark{1} \{kashani,swkim, ashfaq\}@iastate.edu,
+		 \IEEEauthorrefmark{2} \{gorkem, erfank\}@iastate.edu
+		 \IEEEauthorrefmark{3} \{yiludong,tvw5452,hussain1\}@psu.edu}
+	 \IEEEauthorrefmark{4} \
+	 {farid.nait-abdesselam@u-paris.fr}}
+	
+	
+\maketitle
+\begingroup\renewcommand\thefootnote{\textsection}
+
+
+
+\maketitle
+
+%-------------------------------------------------------------------------------
+\begin{abstract}
+\input{Sections/0-Abstract}
+\end{abstract}
+
+\section{Introduction}\label{Introduction}
+\input{Sections/1-Introduction}
+
+\section{Preliminaries}\label{prelim}
+\input{Sections/1.5-Prelim}
+
+\section{Literature Review}\label{literature_review}
+\input{Sections/2-Literature Review}
+
+\section{Threat Model}\label{Threat Model}
+\input{Sections/2.5-Threat Model}
+
+\section{Design Goals}\label{Design Goals}
+\input{Sections/3-Design Goals}
+
+\section{Dependency Mapping}\label{Novel Mapping}
+\input{Sections/3.5-Novel Mapping}
+
+\section{Optimization Model}\label{Proposed Scheme}
+\input{Sections/4-Proposed Scheme}
+
+\section{Security Analysis}\label{Security Analysis}
+\input{Sections/5-Security Analysis}
+
+\section{Performance Evaluation}\label{Results}
+\input{Sections/6-Experimentation and Validation}
+
+\section{Results}\label{Discussion}
+\input{Sections/7-Resutls}
+
+\section{Conclusion}\label{Conclusion}
+\input{Sections/8-Conclusion}
+
+
+
+
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}
