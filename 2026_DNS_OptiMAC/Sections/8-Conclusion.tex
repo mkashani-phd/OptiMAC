@@ -12,14 +12,11 @@
 
 % In conclusion, our research significantly advances the understanding and optimization of message authentication codes. The methodologies and metrics developed in this study lay a solid foundation for future research and practical applications, contributing to the development of more robust and efficient secure communication systems. We believe that our work will inspire further innovations in this critical area of network security.
 
+This work presents OptiMAC, a framework for optimizing integrity verification in lossy and adversarial communication channels. OptiMAC addresses the trade-off between security and efficiency in MAC schemes by introducing a dependency-graph representation and a mixed-integer linear programming formulation for tag-to-message assignment. 
 
-This work presented \emph{OptiMAC}, a comprehensive framework for optimizing integrity verification in lossy and adversarial communication channels. OptiMAC addresses the long-standing trade-off between security and efficiency in MAC schemes by introducing a dependency-graph representation and a mixed-integer linear programming formulation for tag-to-message assignment. Through this structured optimization, OptiMAC systematically reduces bandwidth
-and computational overhead while enhancing resilience against jamming.
+Unlike traditional and heuristic-based approaches, OptiMAC moves beyond fixed or ad hoc configurations. While ProMAC established a general framework, it did not provide a systematic method for determining key parameters such as tag generation, update rules, and assignment strategies. OptiMAC fills this gap by modeling assignments as a dependency graph and optimizing them mathematically, ensuring configurations are tailored to the operating environment.
 
-In contrast to traditional and heuristic-based approaches, OptiMAC moves beyond fixed or ad hoc configurations. While ProMAC established a generalized framework, it lacked a systematic method for determining critical parameters such as tag generation, update rules, and assignment strategies. OptiMAC fills this gap by mapping assignments onto a dependency graph and optimizing them mathematically, ensuring that each configuration is tailored to the demands of its environment.
-
-Our evaluation of WiFi and 5G scenarios demonstrates that OptiMAC achieves higher effective security while operating at lower tag-to-message ratios than prior schemes. These results highlight the practicality of the framework for energy-sensitive and
-mission-critical applications, where efficiency and robustness must coexist.
+Evaluations in WiFi and 5G scenarios show that OptiMAC achieves higher effective security while operating at lower tag-to-message ratios than prior schemes. These results demonstrate the framework’s practicality for energy-sensitive and mission-critical applications, where efficiency and robustness must coexist.
 
 % Looking ahead, this foundation enables further research into adaptive
 % techniques that jointly optimize latency, efficiency, and security. A promising
