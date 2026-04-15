@@ -1,22 +1,3 @@
-\begin{table*}[t]
-\centering
-\caption{Prior approaches vs.\ OptiMAC (qualitative comparison).}
-\label{tab:rw-compare}
-% \begin{tabular}{p{2.8cm}p{3.7cm}p{2.1cm}p{2cm}p{2.6cm}p{1.8cm}}
-\begin{tabular}{llllll}
-\toprule
-\textbf{Approach} & \textbf{Overhead handling} & \makecell[l]{\textbf{Jamming}\\ \textbf{resistance}} & \makecell[l]{\textbf{\# tag assigned} \\ \textbf{per~msg}} & \textbf{\# tag (n) vs. \# msg (m)} & \textbf{Tag size} \\
-\midrule
-Traditional MAC & None & Highest  & 1 (fixed) &$n=m$ (fixed) & High\\
-Short MAC~\cite{badgeOfShame} & Tag truncation & Highest &1 (fixed) & $n=m$ (fixed)& Low\\
-Agg. MAC~\cite{aggregateMAC,sequential_aggregate} & Grouping & Low &1 (fixed)&  $n\leq m$ (semi-flexible)& High\\
-Agg. msg~\cite{compundMAC_original,compoundMAC} & Grouping & Low &1 (fixed)&  $n\leq m$ (semi-flexible)& High\\
-ProMACs~\cite{ProMAC1, cuMAC} & \makecell[l]{Stateful multi-verification} & Low & $\geq 1$ (flexible)& $n=m$ (fixed) & Low\\
-SP-MAC~\cite{proMac2} & \makecell[l]{Golomb rulers based \\dependency assignment} & Medium & $\geq 1$ (flexible)& $n=m$ (fixed) & Low\\ 
-\textbf{OptiMAC} & \textbf{Optimizing dependencies} & \textbf{High} & \textbf{Optimized} &  $n\leq m$ \textbf{(fully flexible)} & \textbf{Optima} \\
-\bottomrule
-\end{tabular}
-\end{table*}
 
 
 Various integrity verification methods have been developed to reduce communication and computational overhead. The overhead imposed by Message Authentication Codes (MACs) is a significant issue in bandwidth-limited networks such as CAN~\cite{compoundMAC} and in high data rate applications within 5G networks~\cite{etsi_ts_133501_v17_5_0}. Truncated MACs have been proposed as a practical solution to mitigate this overhead. However, truncation comes at the expense of security strength, making the system more vulnerable to collision attacks~\cite{ProMAC1}.

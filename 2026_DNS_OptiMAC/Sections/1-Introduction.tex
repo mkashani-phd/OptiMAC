@@ -80,6 +80,27 @@ Prior attempts to cut overhead follow two main directions. The first is to short
 \end{figure}
 The second direction is to use one tag across multiple messages using aggregate MAC or aggregate message techniques~\cite{aggregateMAC,compoundMAC, compundMAC_original}. Nonetheless, aggregating creates verification dependencies: the tag can only verify the integrity of the group if all of its dependent messages arrive correctly. In lossy or adversarial wireless settings (e.g., under jamming), losing even a single dependent message makes the tag unusable and enables denial-of-service against the integrity check~\cite{DoS_AggregateMAC,XOR_MAC,proMac2,when_And_How_Aggregate_In_Lossy_Channel}.
 
+\begin{table*}[h]
+	\centering
+	\caption{Prior approaches vs.\ OptiMAC (qualitative comparison).}
+	\label{tab:rw-compare}
+	% \begin{tabular}{p{2.8cm}p{3.7cm}p{2.1cm}p{2cm}p{2.6cm}p{1.8cm}}
+		\begin{tabular}{llllll}
+			\toprule
+			\textbf{Approach} & \textbf{Overhead handling} & \makecell[l]{\textbf{Jamming}\\ \textbf{resistance}} & \makecell[l]{\textbf{\# tag assigned} \\ \textbf{per~msg}} & \textbf{\# tag (n) vs. \# msg (m)} & \textbf{Tag size} \\
+			\midrule
+			Traditional MAC & None & Highest  & 1 (fixed) &$n=m$ (fixed) & High\\
+			Short MAC~\cite{badgeOfShame} & Tag truncation & Highest &1 (fixed) & $n=m$ (fixed)& Low\\
+			Agg. MAC~\cite{aggregateMAC,sequential_aggregate} & Grouping & Low &1 (fixed)&  $n\leq m$ (semi-flexible)& High\\
+			Agg. msg~\cite{compundMAC_original,compoundMAC} & Grouping & Low &1 (fixed)&  $n\leq m$ (semi-flexible)& High\\
+			ProMACs~\cite{ProMAC1, cuMAC} & \makecell[l]{Stateful multi-verification} & Low & $\geq 1$ (flexible)& $n=m$ (fixed) & Low\\
+			SP-MAC~\cite{proMac2} & \makecell[l]{Golomb rulers based \\dependency assignment} & Medium & $\geq 1$ (flexible)& $n=m$ (fixed) & Low\\ 
+			\textbf{OptiMAC} & \textbf{Optimizing dependencies} & \textbf{High} & \textbf{Optimized} &  $n\leq m$ \textbf{(fully flexible)} & \textbf{Optima} \\
+			\bottomrule
+		\end{tabular}
+	\end{table*}
+
+
 Armknecht et al.~\cite{ProMAC1} proposed the Progressive MAC (ProMAC) framework, which generalizes many aggregation schemes by maintaining an internal state (a buffer) that is updated with each new message and then used to generate tags. A notable realization of this framework, the Whips scheme, cross-assigns tags across multiple messages so that each message is verified several times. This allows shorter tags to achieve the same effective security level as a longer tag can provide in a traditional MAC~\cite{ProMAC1}. However, like aggregate MAC, Whips was designed for error-free channels. In practice, on jammed or lossy wireless links, Whip is susceptible to sandwich attack~\cite{proMac2}. In adversarial settings, an integrity-check scheme must therefore explicitly account for message loss and maximize goodput, which jointly accounts for the amount of message bits that is integrity verified and the total transmitted tag bits. Intuitively, goodput improves when tag overhead is reduced while ensuring that a equal or higher number of message bits remain verifiable. Directly optimizing this trade-off, however, is extremely challenging.
 
 % : it requires simultaneously assigning tags to messages, evaluating the probability that each tag remains usable under loss and jamming, and selecting tag lengths that jointly influence both the numerator and denominator of the goodput expression. These interdependent decisions form a tightly coupled, combinatorial, and highly non-convex problem, rendering a single unified optimization approach exceedingly difficult.

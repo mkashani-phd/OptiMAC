@@ -65,24 +65,60 @@ The authentication latency vector \( \textbf{L} \) is defined as follows:
 The penalty is the value assigned if message \( m_i \) is not verified by any tag. For example, the latency vector for the Progressive MAC is all zeros. However, the latency vector for the Compound MAC will be as follows:
 $$L = [2, 1, 0, 2, 1, 0, \cdots]$$
 
+\subsubsection{Strength Number (SN)}
+The Strength number SN represents the smallest ratio of messages or tags that, if lost, would prevent the verification of all messages. An upper bound for the strength number is the total number of tags divided by the number of messages, as destroying all tags would result in no verifiable message. If the set consists only of tags, it must include all tags to ensure no message can be verified. However, any tag within this set can be replaced by a message it verifies. If tag-to-message substitutions are selected strategically in a way that for at least two tags, a common message is replaced, the resulting set can potentially have a cardinality less than the number of tags.
 
-\subsection{Simulation under Periodic Jamming}
+Thus, the strength number can be formulated as the minimum number of messages that will make all the tags unusable divided by the number of messages. As a result, let \( \textbf{S} \subseteq \{m_1, m_2, \ldots, m_m\} \) and for any tag, there exists a message in SN that is verified by that tag. 
+\begin{equation}
+	\textbf{S} = \left\{m_i \mid \quad \forall j, \exists i \quad \text{such that} \quad X_{ij}=1 \right\} 
+\end{equation}
+The $|\textbf{S}|$ must be minimized to find the strength number. 
+% This can be achieved by finding the minimum set of rows in the \( X \) matrix that, when summed, produces a row with all elements greater than or equal to one. To compare different schemes, \( |\textbf{S}| \) can be divided by the total number of messages \( |M| \) to be normalized.
+For a given matrix $X$, finding the strength number is similar to the classical set covering the problem with the following formulation. We define a binary variable \( s_i \) for each message.
+\begin{equation}
+	s_i =
+	\begin{cases} 
+		1 & \text{if message $i$ is selected} , \\
+		0 & \text{otherwise}.
+	\end{cases}
+\end{equation}
+The mathematical formulation of this set covering problem will be as follows:
+\begin{align}
+	& \text{min} \sum_{i=1}^{m} s_i  &&  \\
+	& \text{subject to}&& \nonumber\\
+	& && \sum_{i \in \{i| X_{ij}=1\}} s_i \geq 1, \quad \forall j \in \{1, 2, \ldots, n\} \label{setCoveringConstraint} \\
+	& && s_i \in \{0, 1\}, \quad \forall i \in \{1, 2, \ldots, m\}
+\end{align}
+In this formulation, the constraint~\eqref{setCoveringConstraint} guarantees no message will be verified. The objective function is of type cardinality, effectively counting the minimum possible number of messages that guarantee the total failure of the system. Note that the constraint~\eqref{setCoveringConstraint} should only be used for the active tags in $X$.  Further, $|S|$ must be normalized by the number of messages. Therefore $SN$ is given by:
+\begin{equation}
+	SN = \dfrac{\text{min}(|S|)}{m},
+\end{equation}
+where $m$ is the number of messages. The strength number effectively measures the security in terms of availability, representing the percentage of packet loss that results in system failure.
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=.9\columnwidth]{img/results/SN vs Latency.png}
+	\caption{Strength Number and Latency for the optimal solution by attack rates and Tag-to-Message Ratio ($\frac{n}{m}$).}
+	\label{fig:otehrMetrics}
+\end{figure}
+Figure~\ref{fig:otehrMetrics} provides a comparative analysis of the effects of the optimization model on Strength Number (SN) and Latency (L) across different configurations optimized for three distinct attack rates: 0.1, 0.2, and 0.3. Each section corresponds to a specific attack rate and displays bars representing the values of SN (in blue) and L (in red) for various schemes, where each scheme is characterized by a different TMR \( n/m \).
 
-We simulated the transmission of $100{,}000$ packets under periodic jamming,
-where every other message is dropped with probability $p$. Each packet carries
-a $32$-bit message, and the tag sizes were optimized to satisfy a $256$-bit
-security requirement. Figure~\ref{fig:periodic} illustrate the goodput of prior scheme compared to OptiMAC.
 
-\begin{figure*}
-    \centering
-    \includegraphics[width=.95\linewidth]{img/output2.png}
-    \caption{Periodic jamming simulation for message size of 32 bits and security requirements of 256 bits. OptiMAC is the only scheme that can provide adaptive solutions for TMR between 1/2 and 1.}
-    \label{fig:periodic}
-\end{figure*}
-
-The results highlight several key observations. First, most prior schemes are
-restricted to a TMR of exactly one (Traditional, WHIP variants, ...), meaning that every message must be accompanied by a tag. aggregate MAC partially relaxes this by offering ratios of $1/n$, but still only at fixed discrete points. By contrast, OptiMAC supports \emph{arbitrary} TMR values, enabling a much finer adjustment between security and throughput. This flexibility translates into higher goodput across a wide range of $p$ values, particularly under severe jamming conditions ($p=0.6,0.7$), where OptiMAC consistently achieves the best
-performance among all schemes.
+%\subsection{Simulation under Periodic Jamming}
+%
+%We simulated the transmission of $100{,}000$ packets under periodic jamming,
+%where every other message is dropped with probability $p$. Each packet carries
+%a $32$-bit message, and the tag sizes were optimized to satisfy a $256$-bit
+%security requirement. Figure~\ref{fig:periodic} illustrate the goodput of prior scheme compared to OptiMAC.
+%\begin{figure*}
+%	\centering
+%	\includegraphics[width=.95\linewidth]{img/output2.png}
+%	\caption{Periodic jamming simulation for message size of 32 bits and security requirements of 256 bits. OptiMAC is the only scheme that can provide adaptive solutions for TMR between 1/2 and 1.}
+%	\label{fig:periodic}
+%\end{figure*}
+%
+%The results highlight several key observations. First, most prior schemes are
+%restricted to a TMR of exactly one (Traditional, WHIP variants, ...), meaning that every message must be accompanied by a tag. aggregate MAC partially relaxes this by offering ratios of $1/n$, but still only at fixed discrete points. By contrast, OptiMAC supports \emph{arbitrary} TMR values, enabling a much finer adjustment between security and throughput. This flexibility translates into higher goodput across a wide range of $p$ values, particularly under severe jamming conditions ($p=0.6,0.7$), where OptiMAC consistently achieves the best
+%performance among all schemes.
 
 
 
