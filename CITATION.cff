@@ -1,4 +1,57 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite it as below."
+message: "If you use this software, please cite it using the metadata from this file."
+title: "OptiMAC: Adaptive Security Optimization for Message Authentication Codes in Adversarial Environments"
+type: software
+
 authors:
-removed for submision
+  - family-names: "Kashani"
+    given-names: "SeyedMohammad"
+    affiliation: "Department of Electrical and Computer Engineering, Iowa State University"
+
+  - family-names: "Khademnia"
+    given-names: "Erfan"
+    affiliation: "Industrial and Manufacturing Systems Engineering, Iowa State University"
+
+  - family-names: "Emirhuseyinoglu"
+    given-names: "Gorkem"
+    affiliation: "Industrial and Manufacturing Systems Engineering, Iowa State University"
+
+  - family-names: "Dong"
+    given-names: "Yilu"
+    affiliation: "School of Electrical Engineering and Computer Science, Pennsylvania State University"
+
+  - family-names: "Wu"
+    given-names: "Tianwei"
+    affiliation: "School of Electrical Engineering and Computer Science, Pennsylvania State University"
+
+  - family-names: "Kim"
+    given-names: "Sang Wu"
+    affiliation: "Department of Electrical and Computer Engineering, Iowa State University"
+
+  - family-names: "Khokhar"
+    given-names: "Ashfaq"
+    affiliation: "Department of Electrical and Computer Engineering, Iowa State University"
+
+  - family-names: "Nait-Abdesselam"
+    given-names: "Farid"
+    affiliation: "Laboratory of Informatics at Paris Descartes, Université Paris Cité"
+
+  - family-names: "Hussain"
+    given-names: "Syed Rafiul"
+    affiliation: "School of Electrical Engineering and Computer Science, Pennsylvania State University"
+
+repository-code: "https://github.com/USERNAME/REPOSITORY"
+url: "https://github.com/USERNAME/REPOSITORY"
+
+abstract: "Code repository for the paper 'OptiMAC: Adaptive Security Optimization for Message Authentication Codes in Adversarial Environments'."
+
+keywords:
+  - message authentication code
+  - MAC
+  - security optimization
+  - adversarial environment
+  - wireless security
+
+license: "MIT"
+version: "1.0.0"
+date-released: 2026-04-17
